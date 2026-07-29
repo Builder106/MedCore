@@ -1,6 +1,6 @@
 import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { AppProvider } from '../context/AppContext';
 import { MobileDrawer } from './MobileDrawer';
@@ -41,52 +41,60 @@ describe('BottomNav', () => {
   it('renders five tabs for patient role', async () => {
     renderWithShell(<BottomNav onOpenMore={() => {}} />, 'patient');
     const nav = await screen.findByRole('navigation', { name: /primary/i });
-    const links = within(nav).getAllByRole('link');
-    const moreBtn = within(nav).getAllByRole('button');
-    expect(links.length + moreBtn.length).toBe(5);
+    await waitFor(() => {
+      const links = within(nav).getAllByRole('link');
+      const moreBtn = within(nav).getAllByRole('button');
+      expect(links.length + moreBtn.length).toBe(5);
+    });
   });
 
   it('patient tabs include Home, Reminders, Health ID, Video', async () => {
     renderWithShell(<BottomNav onOpenMore={() => {}} />, 'patient');
     const nav = await screen.findByRole('navigation', { name: /primary/i });
-    const hrefs = within(nav)
-      .getAllByRole('link')
-      .map(a => a.getAttribute('href'));
-    expect(hrefs).toContain('/');
-    expect(hrefs).toContain('/reminders');
-    expect(hrefs).toContain('/health-id');
-    expect(hrefs).toContain('/video-consult');
+    await waitFor(() => {
+      const hrefs = within(nav)
+        .getAllByRole('link')
+        .map(a => a.getAttribute('href'));
+      expect(hrefs).toContain('/');
+      expect(hrefs).toContain('/reminders');
+      expect(hrefs).toContain('/health-id');
+      expect(hrefs).toContain('/video-consult');
+    });
   });
 
   it('doctor tabs include Home, Patients, Prescriptions, Voice', async () => {
     renderWithShell(<BottomNav onOpenMore={() => {}} />, 'doctor');
     const nav = await screen.findByRole('navigation', { name: /primary/i });
-    const hrefs = within(nav)
-      .getAllByRole('link')
-      .map(a => a.getAttribute('href'));
-    expect(hrefs).toContain('/');
-    expect(hrefs).toContain('/patients');
-    expect(hrefs).toContain('/prescriptions');
-    expect(hrefs).toContain('/voice-consult');
+    await waitFor(() => {
+      const hrefs = within(nav)
+        .getAllByRole('link')
+        .map(a => a.getAttribute('href'));
+      expect(hrefs).toContain('/');
+      expect(hrefs).toContain('/patients');
+      expect(hrefs).toContain('/prescriptions');
+      expect(hrefs).toContain('/voice-consult');
+    });
   });
 
   it('admin tabs include Home, Staff, Inventory, Reports', async () => {
     renderWithShell(<BottomNav onOpenMore={() => {}} />, 'admin');
     const nav = await screen.findByRole('navigation', { name: /primary/i });
-    const hrefs = within(nav)
-      .getAllByRole('link')
-      .map(a => a.getAttribute('href'));
-    expect(hrefs).toContain('/');
-    expect(hrefs).toContain('/staff');
-    expect(hrefs).toContain('/inventory');
-    expect(hrefs).toContain('/reports');
+    await waitFor(() => {
+      const hrefs = within(nav)
+        .getAllByRole('link')
+        .map(a => a.getAttribute('href'));
+      expect(hrefs).toContain('/');
+      expect(hrefs).toContain('/staff');
+      expect(hrefs).toContain('/inventory');
+      expect(hrefs).toContain('/reports');
+    });
   });
 
   it('invokes onOpenMore when the More tab is tapped', async () => {
     let opened = 0;
     renderWithShell(<BottomNav onOpenMore={() => { opened += 1; }} />, 'patient');
     await screen.findByRole('navigation', { name: /primary/i });
-    const more = screen.getByRole('button', { name: /more/i });
+    const more = await screen.findByRole('button', { name: /more/i });
     fireEvent.click(more);
     expect(opened).toBe(1);
   });
@@ -102,11 +110,13 @@ describe('MobileDrawer', () => {
   it('renders all patient nav items when role=patient', async () => {
     renderWithShell(<MobileDrawer open={true} onClose={() => {}} />, 'patient');
     const dialog = await screen.findByRole('dialog', { name: /navigation/i });
-    const links = within(dialog).getAllByRole('link');
-    const hrefs = links.map(a => a.getAttribute('href'));
-    expect(hrefs).toContain('/health-id');
-    expect(hrefs).toContain('/records');
-    expect(hrefs).toContain('/consent');
+    await waitFor(() => {
+      const links = within(dialog).getAllByRole('link');
+      const hrefs = links.map(a => a.getAttribute('href'));
+      expect(hrefs).toContain('/health-id');
+      expect(hrefs).toContain('/records');
+      expect(hrefs).toContain('/consent');
+    });
   });
 
   it('closes when a nav link inside is clicked', async () => {
