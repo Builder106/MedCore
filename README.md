@@ -105,15 +105,6 @@ All external integrations fall back to mocks when API keys are absent, so the ca
 ## Demo recordings
 
 <details>
-<summary><strong>YAIS IV walkthrough</strong> — full feature tour from the Yale presentation (≈3 min)</summary>
-
-<video src="assets/medcore-demo.mp4" controls width="100%"></video>
-
-The same walkthrough shown to YAIS IV judges. Covers: login → patient chart → AI summary → drug interaction override → voice consult transcription → video consult → SMS doctor commands → medication reminders → Health ID QR → offline PWA mode.
-
-</details>
-
-<details>
 <summary><strong>Core workflow</strong> — doctor signs in, opens a patient chart, AI panel auto-loads (≈25s)</summary>
 
 ![Doctor signs in and opens a patient chart](assets/demo-01-core.gif)
