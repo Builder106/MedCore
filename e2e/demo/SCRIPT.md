@@ -5,6 +5,7 @@ One section per video. Each section has a **clean script** (the literal text fed
 Target ~140 wpm. Use contractions. Avoid superlatives. Don't announce transitions — the cuts do that.
 
 Suggested voice / delivery:
+
 - ElevenLabs Adam or Brian; OpenAI alloy or echo.
 - Speed ~0.95×.
 - Stability biased high (less variability ≈ less theatrical).
@@ -18,7 +19,7 @@ Sign in with the doctor's ID and PIN — it's the same flow nurses run in the fi
 ### Timed beats
 
 | t (s) | Line | On-screen |
-|---|---|---|
+| --- | --- | --- |
 | 0.5 | Sign in with the doctor's ID and PIN | Login form, fields filling |
 | 6.0 | — it's the same flow nurses run in the field on a $50 Android | Dashboard loads |
 | 12.0 | Once the chart loads, the AI panel pulls up a summary of the patient's last six months: | Patient chart visible, AI panel opening |

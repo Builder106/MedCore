@@ -2,7 +2,7 @@
 
 [https://chat.whatsapp.com/JPkGbWnzcB2JeeJZjZ3Cgv?mode=gi\_t](https://chat.whatsapp.com/JPkGbWnzcB2JeeJZjZ3Cgv?mode=gi_t)
 
-Hello guys, it’s me Agoth. I will come a bit late—I lost my stuffs and I am looking for them.   
+Hello guys, it’s me Agoth. I will come a bit late—I lost my stuffs and I am looking for them.
 Thanks
 
 YALE PITCH IDEAS
@@ -13,23 +13,21 @@ OUR PITCH DECK: [https://canva.link/lp3a8zlwrnjo1nc](https://canva.link/lp3a8zlw
 
 Healthcare \-
 
-ekk55@scarletmail.rutgers.edu 
-
- 
+<ekk55@scarletmail.rutgers.edu>
 
 PROBLEM:
 
-* Lack of consistent, reliable patient medical records \-\> effects?   
-* Lack of access to healthcare   
+* Lack of consistent, reliable patient medical records \-\> effects?
+* Lack of access to healthcare
 * Stress on doctors due to the doctor-patient ratio- help them with some digital intelligence assistant?  
 * Keep track of important data like diagnoses, wait times and patient outcomes to maybe identify more gaps?
 
 SOLUTION:  
 We are trying to build a solution to this for Africans : PROBLEM:
 
-Lack of consistent, reliable patient medical records \-\> effects? 
+Lack of consistent, reliable patient medical records \-\> effects?
 
-Lack of access to healthcare 
+Lack of access to healthcare
 
 Stress on doctors due to the doctor-patient ratio- help them with some digital intelligence assistant?
 
@@ -39,8 +37,8 @@ Stress on doctors due to the doctor-patient ratio- help them with some digital i
 
 ROAD BLOCKS:  
 \-Power access  
-\-Transferring paper data   
-\-Security 
+\-Transferring paper data
+\-Security
 
 VALUE PROPOSITION:
 
@@ -189,7 +187,7 @@ Build a centralised digital health records platform designed for African healthc
 
 # Problem statement
 
-# Expanded Problem StatementHealthcare systems in target markets such as Kenya, Nigeria, and Ghana face a structural challenge: patient data does not move with the patient.
+# Expanded Problem StatementHealthcare systems in target markets such as Kenya, Nigeria, and Ghana face a structural challenge: patient data does not move with the patient
 
 Most private clinics—the primary point of care for a large share of the population—operate with:
 
@@ -370,7 +368,7 @@ Technical:
 \- Use Africa's Talking API as SMS gateway (covers Nigeria, Ghana, Kenya, Senegal, Tanzania \+ 14 other African countries)  
 \- Backend: Node.js webhook at /api/sms/inbound — parse command, query DB, format response, send reply via Africa's Talking outbound API  
 \- Build an SMS inbox panel in the doctor dashboard showing: timestamp, patient ID, query type, response snippet — filterable by date, patient, and query type  
-    
+
 FEATURE 5 — MEDICATION REMINDERS
 
 Add a medication reminder system to MedCore that notifies patients when it's time to take their medication via SMS and in-app push notifications.
@@ -419,7 +417,7 @@ Add a real-time drug interaction checker to MedCore that alerts doctors when a n
 HOW IT TRIGGERS:  
 \- When a doctor opens the "Add prescription" form and types or selects a drug name, immediately check it against the patient's current medication list  
 \- Check happens on every keystroke after 3 characters (debounced 400ms) using the OpenFDA Drug Interaction API  
-\- API endpoint: https://api.fda.gov/drug/label.json?search=drug\_interactions:\[DRUG\_NAME\]  
+\- API endpoint: <https://api.fda.gov/drug/label.json?search=drug\_interactions:\[DRUG\_NAME\>]  
 \- Also check the RxNorm API for cross-referencing drug names to standard codes before querying
 
 ALERT LEVELS — show three tiers:  
@@ -453,10 +451,10 @@ TECH STACK:
 
 Several digital health platforms already operate in this space, including:
 
-- SOBRUS,   
-- Teladoc Health,   
-- CommCare,   
-- Babylon Health, etc
+* SOBRUS,
+* Teladoc Health,
+* CommCare,
+* Babylon Health, etc
 
 These solutions have made meaningful progress in digitizing healthcare services and expanding access to medical support through technology.
 
@@ -514,13 +512,13 @@ We are not competing as another telehealth app or clinic EMR. We are building:
 
 ---
 
-## 
+##
 
-## 
+##
 
 ## **Competitive Comparison**
 
-| Capability | Us | Teladoc  | CommCare | Typical EMRs |
+| Capability | Us | Teladoc | CommCare | Typical EMRs |
 | ----- | ----- | ----- | ----- | ----- |
 | Cross-clinic patient records | Yes | No | No | No |
 | Portable patient identity (QR) | Yes | No | No | No |
@@ -601,7 +599,7 @@ While competitors have validated demand and built important pieces of the ecosys
 
 [https://docs.google.com/presentation/d/1EIIpoUod0JvQ-KYoSc9WzJL0dOt5\_8NTKQ6R1i1x16A/edit?usp=sharing](https://docs.google.com/presentation/d/1EIIpoUod0JvQ-KYoSc9WzJL0dOt5_8NTKQ6R1i1x16A/edit?usp=sharing)
 
-[https://gamma.app/docs/Fixing-Ghanas-Medical-Records-Crisis-An-Offline-First-Hybrid-Digi-n0lqwpz2f0w48y3](https://gamma.app/docs/Fixing-Ghanas-Medical-Records-Crisis-An-Offline-First-Hybrid-Digi-n0lqwpz2f0w48y3) 
+[https://gamma.app/docs/Fixing-Ghanas-Medical-Records-Crisis-An-Offline-First-Hybrid-Digi-n0lqwpz2f0w48y3](https://gamma.app/docs/Fixing-Ghanas-Medical-Records-Crisis-An-Offline-First-Hybrid-Digi-n0lqwpz2f0w48y3)
 
 # HOW ARE WE MARKETING
 
@@ -663,7 +661,7 @@ Compared to:
 * Phase 1: Clinics (core revenue)  
 * Phase 2: Labs & pharmacies (transactional revenue)  
 * Phase 3: Insurers (claims \+ data integrations)  
-* 
+*
 
 # "OUR SECRET SAUCE"
 

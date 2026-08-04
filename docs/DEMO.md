@@ -4,7 +4,6 @@ This is what actually needs a phone — and for each one, what to show, why it's
 
 ## TL;DR — seven things only a phone proves
 
-
 | #   | Feature                                      | What it proves                                  |
 | --- | -------------------------------------------- | ----------------------------------------------- |
 | 1   | **PWA install**                              | "Works like a native app, offline-capable"      |
@@ -15,7 +14,6 @@ This is what actually needs a phone — and for each one, what to show, why it's
 | 6   | **Health ID QR**                             | Paper/ID card → instant patient chart           |
 | 7   | **Low-bandwidth / offline mode on cellular** | Realistic network conditions                    |
 
-
 Everything else (i18n, prescriptions, interactions, inbox, dashboards, admin) is just as convincing on the laptop. Bring those up there, bring the seven items above up on your phone.
 
 ---
@@ -25,9 +23,11 @@ Everything else (i18n, prescriptions, interactions, inbox, dashboards, admin) is
 ### Laptop
 
 1. From the project root:
+
   ```bash
    npm run demo
   ```
+
    Wait for **all three**:
 2. Scan the QR the tunnel script prints, or AirDrop the URL to your phone.
 3. **Sign in** when the app loads. Sessions use a secure HTTP-only cookie after you authenticate. Demo accounts (override PINs via `server/.env` if needed):
@@ -37,7 +37,6 @@ Everything else (i18n, prescriptions, interactions, inbox, dashboards, admin) is
   | Doctor  | `DOC-001` | `4242` |
   | Patient | `PAT-001` | `1212` |
   | Admin   | `ADM-001` | `3434` |
-
 
 ### Phone
 
@@ -49,14 +48,12 @@ Everything else (i18n, prescriptions, interactions, inbox, dashboards, admin) is
 
 Copy `server/.env.example` to `server/.env` on the laptop and fill only what you want live:
 
-
 | Feature                  | Env vars                                                                           |
 | ------------------------ | ---------------------------------------------------------------------------------- |
 | Real Whisper transcripts | `OPENAI_API_KEY`                                                                   |
 | Real Daily.co rooms      | `DAILY_API_KEY`, `DAILY_DOMAIN`                                                    |
 | Real SMS round-trip      | `AT_API_KEY`, `AT_USERNAME`, `DEMO_DOCTOR_PHONE=+1yourmobile`                      |
 | Real push notifications  | `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY` (`npx web-push generate-vapid-keys`) |
-
 
 Everything you leave blank runs against the built-in mock. Restart `npm run demo` after editing `.env`.
 
@@ -148,10 +145,11 @@ Doctors in African clinics often consult bedside with a phone, not a laptop. The
 3. Check the consent checkbox ("I agree to the recording") — mention audio retention is 30 days and auto-purged (`purgeExpiredAudio` in `server/src/routes/voice.ts`).
 4. Tap **Record** — allow mic when iOS prompts.
 5. Dictate into the phone for ~15–30 seconds, e.g.:
+
   > "Chief complaint: 42-year-old female with two weeks of intermittent headaches, worse in the evenings. History: hypertension, on amlodipine. Assessment: likely tension-type headache, rule out poorly controlled blood pressure. Plan: recheck BP, trial of paracetamol, follow up in one week."
-6. Tap **Stop** → tap **Generate consultation note**.
-7. The SOAP fields populate. Edit inline if you want, then **Save**.
-8. Show the past-recordings list at the bottom with the embedded audio player.
+1. Tap **Stop** → tap **Generate consultation note**.
+2. The SOAP fields populate. Edit inline if you want, then **Save**.
+3. Show the past-recordings list at the bottom with the embedded audio player.
 
 ### Does the doctor “send” this to the patient?
 
@@ -240,9 +238,11 @@ This isn't about your smartphone's browser — it's about using the **actual SMS
 - Africa's Talking account + shortcode (free sandbox: [https://account.africastalking.com](https://account.africastalking.com)).
 - `server/.env`: `AT_API_KEY`, `AT_USERNAME`, and `**DEMO_DOCTOR_PHONE=+254…`** — your actual phone number in E.164.
 - Set the AT dashboard's **SMS callback URL** to:
+
   ```
   https://<your-tunnel>.trycloudflare.com/api/sms/inbound
   ```
+
 - Wait for the AT sandbox approval (~minutes).
 
 ### Show it
@@ -295,8 +295,9 @@ The QR encodes an **HTTPS URL** on the **same origin** as the app (your tunnel o
 
 1. **Patient phone**: **Health ID** — show the card + QR (audience sees a realistic “ID card”).
 2. **Doctor (laptop or phone, logged in as `DOC-001`)**: Scan the QR with the **camera app** (or open the encoded URL from a QR reader) to land on **PAT-001**’s chart, **or** use **Patients** → search `**PAT-001`**.
-  - **Yes, the doctor can use their own phone** — sign in as doctor first if the browser opened by the camera has no MedCore session.  
-  - The **Scan QR** control on the Patients list is **not** connected to a camera in this build; the **system camera** scanning the patient’s Health ID QR is the supported path.
+
+- **Yes, the doctor can use their own phone** — sign in as doctor first if the browser opened by the camera has no MedCore session.  
+- The **Scan QR** control on the Patients list is **not** connected to a camera in this build; the **system camera** scanning the patient’s Health ID QR is the supported path.
 
 ### Talking point
 

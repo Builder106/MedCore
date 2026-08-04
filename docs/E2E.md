@@ -3,7 +3,7 @@
 MedCore ships two Playwright + Gherkin suites that share a step library and split at the config / feature-file level.
 
 | | **QA suite** | **Demo suite** |
-|---|---|---|
+| --- | --- | --- |
 | Config | [`e2e/playwright.config.ts`](../e2e/playwright.config.ts) | [`e2e/playwright.demo.config.ts`](../e2e/playwright.demo.config.ts) |
 | Features | [`e2e/features/`](../e2e/features/) | [`e2e/demo/features/`](../e2e/demo/features/) |
 | Goal | Verify behaviour. Fast, headless, parallel. | Produce narrative mp4 walkthroughs. |
@@ -41,7 +41,7 @@ Per the spec in [`~/.claude/CLAUDE.md`](https://github.com/Builder106) "Gherkin 
 Environment-variable knobs (defaults in parens):
 
 | Var | Default | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | `DEMO` | — | Master switch. Hooks no-op when not `1`. |
 | `DEMO_SLOWMO` | `1200` | Per-action pause in ms |
 | `DEMO_TYPE_DELAY` | `70` | Per-character delay in ms for slow typing |
@@ -62,11 +62,13 @@ Environment-variable knobs (defaults in parens):
 2. Use existing steps from [`e2e/steps/common.steps.ts`](../e2e/steps/common.steps.ts) where possible — accessibility-first locators only.
 3. Run `DEMO=1 npm run e2e:demo`. The output mp4 lands at `e2e/demo-videos/<feature-slug>-<scenario-slug>.mp4`.
 4. Add a narration section to [`e2e/demo/SCRIPT.md`](../e2e/demo/SCRIPT.md), render with TTS, mux audio in:
+
    ```bash
    ffmpeg -i demo.mp4 -i narration.mp3 \
      -map 0:v -map 1:a -c:v copy -c:a aac -shortest \
      demo-narrated.mp4
    ```
+
 5. Embed in the README under the existing `<details>` block for that user-journey cluster.
 
 ## Adding a new QA scenario

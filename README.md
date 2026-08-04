@@ -49,7 +49,7 @@ The Vite dev server proxies `/api/*` to the Express server on port 3001 and bind
 ### Sign-in (demo)
 
 | Role | User ID | Default PIN |
-|------|---------|-------------|
+| ------ | --------- | ------------- |
 | Doctor | `DOC-001` | `4242` |
 | Patient | `PAT-001` | `1212` |
 | Admin | `ADM-001` | `3434` |
@@ -161,7 +161,7 @@ CI runs all of the above on every PR — see [`.github/workflows/ci.yml`](.githu
 ## Docs
 
 | File | Contents |
-|------|----------|
+| ------ | ---------- |
 | [`docs/PRD.md`](docs/PRD.md) | Full product requirements document |
 | [`docs/DEMO.md`](docs/DEMO.md) | Phone walkthrough for all 8 features |
 | [`docs/ENV_SETUP.md`](docs/ENV_SETUP.md) | Guide to filling out `server/.env` |
