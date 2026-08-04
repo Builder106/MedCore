@@ -147,6 +147,7 @@ Doctors in African clinics often consult bedside with a phone, not a laptop. The
 5. Dictate into the phone for ~15–30 seconds, e.g.:
 
   > "Chief complaint: 42-year-old female with two weeks of intermittent headaches, worse in the evenings. History: hypertension, on amlodipine. Assessment: likely tension-type headache, rule out poorly controlled blood pressure. Plan: recheck BP, trial of paracetamol, follow up in one week."
+
 1. Tap **Stop** → tap **Generate consultation note**.
 2. The SOAP fields populate. Edit inline if you want, then **Save**.
 3. Show the past-recordings list at the bottom with the embedded audio player.
@@ -239,7 +240,7 @@ This isn't about your smartphone's browser — it's about using the **actual SMS
 - `server/.env`: `AT_API_KEY`, `AT_USERNAME`, and `**DEMO_DOCTOR_PHONE=+254…`** — your actual phone number in E.164.
 - Set the AT dashboard's **SMS callback URL** to:
 
-  ```
+  ```text
   https://<your-tunnel>.trycloudflare.com/api/sms/inbound
   ```
 
@@ -249,7 +250,7 @@ This isn't about your smartphone's browser — it's about using the **actual SMS
 
 From your phone's native SMS app, send the AT shortcode (shown on the AT dashboard):
 
-```
+```text
 PATIENT PAT-001 PIN:4242
 ```
 
@@ -338,7 +339,7 @@ That reinforces the "works on any phone" narrative even if you don't wire it up 
 
 Tape this to your laptop:
 
-```
+```text
 LAPTOP (DOC-001 / 4242)
   • /patients → PAT-001 chart                  (F8 doctor side; search works on phone too)
   • /prescriptions → Aspirin + Warfarin → PIN 4242 override
