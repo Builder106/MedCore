@@ -5,6 +5,16 @@
   "outputDirectory": "dist",
   "framework": "vite",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "https://136-117-181-143.nip.io/api/$1" }
-  ]
+    {
+      "source": "/api/(.*)",
+      "destination": "https://136-117-181-143.nip.io/api/$1"
+    }
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "main": true,
+      "staging": true,
+      "*": false
+    }
+  }
 }
