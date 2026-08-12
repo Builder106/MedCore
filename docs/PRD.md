@@ -603,7 +603,7 @@ While competitors have validated demand and built important pieces of the ecosys
 ## **Customers, Monetization & Go-to-Market**
 
 **Who pays**  
- Primary payers are **private clinics and provider groups** (clinic owners, medical directors). These providers capture the financial upside from improved efficiency and billing. Secondary payers include **labs, pharmacies, and insurers** as integrations deepen. Patients and doctors are core users, but revenue is anchored on providers.
+ Primary payers are **private clinics and provider groups**(clinic owners, medical directors). These providers capture the financial upside from improved efficiency and billing. Secondary payers include**labs, pharmacies, and insurers** as integrations deepen. Patients and doctors are core users, but revenue is anchored on providers.
 
 **Pricing & how they pay**  
  We use a simple, mobile-aligned pricing model:
@@ -658,6 +658,7 @@ Compared to:
 * Phase 1: Clinics (core revenue)  
 * Phase 2: Labs & pharmacies (transactional revenue)  
 * Phase 3: Insurers (claims \+ data integrations)  
+
 *
 
 ## "OUR SECRET SAUCE"

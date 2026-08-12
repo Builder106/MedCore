@@ -29,11 +29,11 @@ CI runs all of the above on every PR. PRs must keep the suite green.
 
 ## Project guardrails
 
-- **PHI safety.** Patient data is sensitive even in demos. Don't log full patient records, don't commit real PII, and don't bypass the `auditMiddleware` on `/api` routes — every read/write must be recorded.
+- **PHI safety.** Patient data is sensitive even in demos. Don't log full patient records, don't commit real PII, and don't bypass the `auditMiddleware`on`/api` routes — every read/write must be recorded.
 - **Offline-first.** The PWA must work without network. New features should not assume connectivity; degrade to a queued or mock path when offline.
 - **Mock-friendly integrations.** Every third-party call (Daily, OpenAI, Africa's Talking, OpenFDA, RxNorm) must keep its mock fallback. Tests should never hit real APIs — vitest sets `NODE_ENV=test` which skips dotenv loading; API mocks live in test setup.
 - **Low-bandwidth UX.** Target a 3G connection on a $50 Android phone. Keep route bundles small; avoid synchronous heavy work on the main thread.
-- **RBAC.** New patient-scoped endpoints must use `requireRole` / `requirePatientAccess` from [`server/src/middleware/rbac.ts`](server/src/middleware/rbac.ts). Don't trust client-supplied `patientId` without going through that gate.
+- **RBAC.** New patient-scoped endpoints must use `requireRole`/`requirePatientAccess` from [`server/src/middleware/rbac.ts`](server/src/middleware/rbac.ts). Don't trust client-supplied `patientId` without going through that gate.
 - **FHIR shape.** When adding domain entities, mirror the FHIR resource shape where reasonable so the `/api/fhir` exporters keep working.
 
 ## Commit & PR convention

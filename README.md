@@ -14,7 +14,7 @@
 [![FHIR](https://img.shields.io/badge/FHIR-R4-orange.svg)](server/src/lib/fhir-mappers.ts)
 [![Yale AIS](https://img.shields.io/badge/Yale%20AIS%20IV-Winner-DAB776.svg)](https://www.yaleafricainnovation.org/)
 
-MedCore is a centralised digital health records platform for African healthcare providers — a **Vite + React PWA** front-end with a **Node + Express + SQLite (libSQL)** API. It implements the [PRD's eight features](docs/PRD.md) end-to-end with FHIR-shaped resources, RBAC-gated access, and an AI assist layer that summarises patient context and surfaces risk flags. Every external integration (Daily.co, OpenAI Whisper, Africa's Talking, OpenFDA, Web Push) ships with a working mock so the demo runs offline.
+MedCore is a centralised digital health records platform for African healthcare providers — a **Vite + React PWA**front-end with a**Node + Express + SQLite (libSQL)** API. It implements the [PRD's eight features](docs/PRD.md) end-to-end with FHIR-shaped resources, RBAC-gated access, and an AI assist layer that summarises patient context and surfaces risk flags. Every external integration (Daily.co, OpenAI Whisper, Africa's Talking, OpenFDA, Web Push) ships with a working mock so the demo runs offline.
 
 ## 🏆 Recognition
 
@@ -44,17 +44,17 @@ npm run dev
 - Web: <http://localhost:5173>
 - API: <http://localhost:3001/api/health>
 
-The Vite dev server proxies `/api/*` to the Express server on port 3001 and binds to `0.0.0.0`, so a phone on the same Wi-Fi can open `http://<laptop-ip>:5173`.
+The Vite dev server proxies `/api/*`to the Express server on port 3001 and binds to`0.0.0.0`, so a phone on the same Wi-Fi can open `http://<laptop-ip>:5173`.
 
 ### Sign-in (demo)
 
 | Role | User ID | Default PIN |
 | ------ | --------- | ------------- |
-| Doctor | `DOC-001` | `4242` |
-| Patient | `PAT-001` | `1212` |
-| Admin | `ADM-001` | `3434` |
+| Doctor | `DOC-001`|`4242` |
+| Patient | `PAT-001`|`1212` |
+| Admin | `ADM-001`|`3434` |
 
-PINs are configurable in `server/.env` (see `server/.env.example`). For production, set `SESSION_SECRET` to a long random string (≥32 characters). If a login fails after editing PINs, restart the API to resync demo PINs — dev does this on every start.
+PINs are configurable in `server/.env`(see`server/.env.example`). For production, set `SESSION_SECRET` to a long random string (≥32 characters). If a login fails after editing PINs, restart the API to resync demo PINs — dev does this on every start.
 
 ## How it works
 
@@ -136,16 +136,21 @@ See [`docs/DEMO.md`](docs/DEMO.md) for the full phone walkthrough (PWA install, 
 Media APIs (camera, microphone, push) require a **secure context**:
 
 ```bash
+
 # Option 1 — tunnel (recommended for dev)
+
 cloudflared tunnel --url http://localhost:5173    # brew install cloudflared
+
 # or
+
 ngrok http 5173
 
 # Option 2 — light cloud deploy (Fly.io / Railway / Render)
+
 docker build -t medcore .
 ```
 
-For the Africa's Talking SMS callback, point the inbound webhook at `https://<your-public-url>/api/sms/inbound` and send `PATIENT PAT-001 PIN:4242` from the phone number set as `DEMO_DOCTOR_PHONE` in `server/.env`.
+For the Africa's Talking SMS callback, point the inbound webhook at `https://<your-public-url>/api/sms/inbound`and send`PATIENT PAT-001 PIN:4242`from the phone number set as`DEMO_DOCTOR_PHONE`in`server/.env`.
 
 ## Tests
 
@@ -172,17 +177,17 @@ CI runs all of the above on every PR — see [`.github/workflows/ci.yml`](.githu
 
 ## Environment variables
 
-Copy `server/.env.example` to `server/.env` and fill in only the integrations you need:
+Copy `server/.env.example`to`server/.env` and fill in only the integrations you need:
 
 | Variable | Purpose | Fallback when empty |
 | --- | --- | --- |
 | `OPENROUTER_API_KEY` | AI summaries and risk flags | Returns a deterministic mock summary |
-| `GROQ_API_KEY` / `OPENAI_API_KEY` | Whisper transcription (F2) | Returns realistic mock transcripts |
-| `DAILY_API_KEY` / `DAILY_DOMAIN` | Video rooms (F3) | Falls back to a public Jitsi room |
+| `GROQ_API_KEY`/`OPENAI_API_KEY` | Whisper transcription (F2) | Returns realistic mock transcripts |
+| `DAILY_API_KEY`/`DAILY_DOMAIN` | Video rooms (F3) | Falls back to a public Jitsi room |
 | `AT_API_KEY` | SMS send (F4 & F5) | Logs to a mock outbox |
-| `WEB_PUSH_PUBLIC_KEY` / `WEB_PUSH_PRIVATE_KEY` | Push reminders (F5) | In-memory fake send |
+| `WEB_PUSH_PUBLIC_KEY`/`WEB_PUSH_PRIVATE_KEY` | Push reminders (F5) | In-memory fake send |
 | `DATABASE_ENCRYPTION_KEY` | AES-256-GCM PII column encryption | Disabled (plaintext) — set before real PII |
-| `DEMO_DOCTOR_PHONE` / `DEMO_PATIENT_PHONE` | Route SMS / reminders to your real number | — |
+| `DEMO_DOCTOR_PHONE`/`DEMO_PATIENT_PHONE` | Route SMS / reminders to your real number | — |
 
 Generate VAPID keys: `npx web-push generate-vapid-keys`. Generate an encryption key: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
 
@@ -201,7 +206,9 @@ Generate VAPID keys: `npx web-push generate-vapid-keys`. Generate an encryption 
 
 ```bash
 docker compose up -d postgres
+
 # then set DATABASE_URL in server/.env to a Postgres URL
+
 ```
 
 The SQLite schema in [`server/src/db/migrations.sql`](server/src/db/migrations.sql) is portable; switching dialects only requires updating the Drizzle client.

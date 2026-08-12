@@ -29,24 +29,25 @@ Everything else (i18n, prescriptions, interactions, inbox, dashboards, admin) is
   ```
 
    Wait for **all three**:
+
 2. Scan the QR the tunnel script prints, or AirDrop the URL to your phone.
 3. **Sign in** when the app loads. Sessions use a secure HTTP-only cookie after you authenticate. Demo accounts (override PINs via `server/.env` if needed):
 
   | Role    | User ID   | PIN    |
   | ------- | --------- | ------ |
-  | Doctor  | `DOC-001` | `4242` |
-  | Patient | `PAT-001` | `1212` |
-  | Admin   | `ADM-001` | `3434` |
+  | Doctor  | `DOC-001`|`4242` |
+  | Patient | `PAT-001`|`1212` |
+  | Admin   | `ADM-001`|`3434` |
 
 ### Phone
 
-1. Open the tunnel URL in **Safari (iOS)** or **Chrome (Android)** — not in an in-app browser like Slack/Gmail, those block push + mic.
+1. Open the tunnel URL in **Safari (iOS)**or**Chrome (Android)** — not in an in-app browser like Slack/Gmail, those block push + mic.
 2. Allow the browser to: **use camera**, **use microphone**, **send notifications** when it asks (you can also pre-grant in Settings).
 3. Bookmark it / add to home screen (see Feature 1 below).
 
 ### Optional — for the full "connected" demo
 
-Copy `server/.env.example` to `server/.env` on the laptop and fill only what you want live:
+Copy `server/.env.example`to`server/.env` on the laptop and fill only what you want live:
 
 | Feature                  | Env vars                                                                           |
 | ------------------------ | ---------------------------------------------------------------------------------- |
@@ -55,7 +56,7 @@ Copy `server/.env.example` to `server/.env` on the laptop and fill only what you
 | Real SMS round-trip      | `AT_API_KEY`, `AT_USERNAME`, `DEMO_DOCTOR_PHONE=+1yourmobile`                      |
 | Real push notifications  | `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY` (`npx web-push generate-vapid-keys`) |
 
-Everything you leave blank runs against the built-in mock. Restart `npm run demo` after editing `.env`.
+Everything you leave blank runs against the built-in mock. Restart `npm run demo`after editing`.env`.
 
 ---
 
@@ -66,22 +67,33 @@ Everything you leave blank runs against the built-in mock. Restart `npm run demo
 - **Laptop = Doctor** (Clinical Workspace) — projected on screen so audience can see.
 - **Phone = Patient** (Patient Portal) — held in your hand, also mirrored if possible.
 
-Use **separate sign-ins** on each device (or **Sign out** and log in as the other demo user on one device): e.g. **Doctor** `DOC-001` / `4242` on the laptop, **Patient** `PAT-001` / `1212` on the phone. Language and current patient ID still persist in local storage per browser profile.
+Use **separate sign-ins**on each device (or**Sign out**and log in as the other demo user on one device): e.g.**Doctor**`DOC-001`/`4242`on the laptop,**Patient**`PAT-001`/`1212` on the phone. Language and current patient ID still persist in local storage per browser profile.
 
 ### The 5-minute narrative
 
 1. **[Laptop / Doctor]** Open a patient, write a prescription with an interaction warning. Enable the "Send via Push" reminder schedule.
+
   → Shows F6 (interactions) + F5 (reminder authoring).
-2. **[Phone / Patient]** Seconds later, a push notification pops. Tap it → opens the PWA to today's reminders. Tap **TAKEN**.
+
+2. **[Phone / Patient]**Seconds later, a push notification pops. Tap it → opens the PWA to today's reminders. Tap**TAKEN**.
+
   → Shows F5 delivery + PWA install.
+
 3. **[Laptop / Doctor]** Refresh the patient's adherence view. The tap you just did on the phone is already logged.
+
   → Closes the loop; this is the "wow".
-4. **[Phone / Patient]** Open **Health ID**, show the QR (encodes a **full URL** to this demo instance: `/patients/PAT-001?from=health-id`).
-5. **[Doctor device — laptop or phone]** Logged in as **Doctor**, use the **system camera** to scan the QR (browser opens the patient chart on the same tunnel origin). **Patients → search `PAT-001`** still works the same if you skip the scan. The **Scan QR** button inside the Patients screen is cosmetic in this MVP — there is no in-app camera scanner wired up.
+
+4. **[Phone / Patient]**Open**Health ID**, show the QR (encodes a **full URL** to this demo instance: `/patients/PAT-001?from=health-id`).
+5. **[Doctor device — laptop or phone]**Logged in as**Doctor**, use the **system camera**to scan the QR (browser opens the patient chart on the same tunnel origin).**Patients → search `PAT-001`**still works the same if you skip the scan. The**Scan QR** button inside the Patients screen is cosmetic in this MVP — there is no in-app camera scanner wired up.
+
   → Shows F8 (portable ID + same chart from the clinician side).
+
 6. **[Laptop / Doctor]** **Voice Consult**. Record ~20 seconds, e.g. *"Patient reports headache, BP 140/90, assessment hypertension, plan amlodipine 5mg."* → SOAP note fills in.
-  → Shows F2 (dictation + structured note on the **chart** — there is no separate “send recording to patient’s phone” in the MVP; the patient does **not** get a voice message or push from this flow).
-7. **[Both]** **Video consult** — ensure **both** devices use `**PAT-001`** as the active patient, then each taps **Start call** (see §3: **same Jitsi room** without copying a URL).
+
+  → Shows F2 (dictation + structured note on the **chart**— there is no separate “send recording to patient’s phone” in the MVP; the patient does**not** get a voice message or push from this flow).
+
+7. **[Both]** **Video consult**— ensure**both** devices use `**PAT-001`**as the active patient, then each taps**Start call**(see §3:**same Jitsi room** without copying a URL).
+
   → F3.
 
 Audience walks away with **"oh, it's one system for both sides."**
@@ -94,8 +106,8 @@ The rest of this document is reference material for each feature — what to sho
 
 Below the `lg` breakpoint (under 1024px, i.e. phones and most tablets):
 
-- **Hamburger** (top-left of the header) opens a full off-canvas drawer with every route for the active role, plus the language picker, **Sign out**, low-bandwidth toggle, offline-sync toggle, and USSD/AES/FHIR compliance badges.
-- **Bottom tab bar** keeps the 4 most-used routes for the active role one tap away, with a fifth **More** tab that re-opens the drawer.
+- **Hamburger**(top-left of the header) opens a full off-canvas drawer with every route for the active role, plus the language picker,**Sign out**, low-bandwidth toggle, offline-sync toggle, and USSD/AES/FHIR compliance badges.
+- **Bottom tab bar**keeps the 4 most-used routes for the active role one tap away, with a fifth**More** tab that re-opens the drawer.
   - Patient: Home, Reminders, Health ID, Video, More
   - Doctor: Home, Patients, Prescriptions, Voice, More
   - Admin: Home, Staff, Inventory, Reports, More
@@ -117,7 +129,7 @@ Installing to the home screen is the move that visually separates "web demo" fro
 ### Show it
 
 - **iOS Safari**: tap Share → **Add to Home Screen** → name stays "MedCore" → Add.
-- **Android Chrome**: menu → **Install app** / **Add to Home screen**.
+- **Android Chrome**: menu → **Install app**/**Add to Home screen**.
 
 Launch from the home-screen icon. The browser chrome disappears; you get a splash screen (the green hex + gold caduceus from `public/icons/icon-192.svg`) and fullscreen shell.
 
@@ -141,20 +153,20 @@ Doctors in African clinics often consult bedside with a phone, not a laptop. The
 ### Show it
 
 1. Log in as **Doctor** (`DOC-001`).
-2. Navigate to **Voice Consult** — on phone it's the **Mic** tab in the bottom bar (Doctor role); on desktop it's in the sidebar.
-3. Check the consent checkbox ("I agree to the recording") — mention audio retention is 30 days and auto-purged (`purgeExpiredAudio` in `server/src/routes/voice.ts`).
+2. Navigate to **Voice Consult**— on phone it's the**Mic** tab in the bottom bar (Doctor role); on desktop it's in the sidebar.
+3. Check the consent checkbox ("I agree to the recording") — mention audio retention is 30 days and auto-purged (`purgeExpiredAudio`in`server/src/routes/voice.ts`).
 4. Tap **Record** — allow mic when iOS prompts.
 5. Dictate into the phone for ~15–30 seconds, e.g.:
 
   > "Chief complaint: 42-year-old female with two weeks of intermittent headaches, worse in the evenings. History: hypertension, on amlodipine. Assessment: likely tension-type headache, rule out poorly controlled blood pressure. Plan: recheck BP, trial of paracetamol, follow up in one week."
 
-1. Tap **Stop** → tap **Generate consultation note**.
-2. The SOAP fields populate. Edit inline if you want, then **Save**.
-3. Show the past-recordings list at the bottom with the embedded audio player.
+6. Tap **Stop**→ tap**Generate consultation note**.
+7. The SOAP fields populate. Edit inline if you want, then **Save**.
+8. Show the past-recordings list at the bottom with the embedded audio player.
 
-### Does the doctor “send” this to the patient?
+### Does the doctor “send” this to the patient
 
-**Not in this MVP.** The flow is **clinical documentation**: audio and transcript are stored against the patient’s chart, and the SOAP note saves into the same record. There is **no** separate action to push the recording, transcript, or note to the patient’s phone (no SMS, no patient-app notification from this screen). That would be a future product feature (e.g. secure link or portal message).
+**Not in this MVP.**The flow is**clinical documentation**: audio and transcript are stored against the patient’s chart, and the SOAP note saves into the same record. There is **no** separate action to push the recording, transcript, or note to the patient’s phone (no SMS, no patient-app notification from this screen). That would be a future product feature (e.g. secure link or portal message).
 
 ### Talking point
 
@@ -176,15 +188,15 @@ A video consult viewed on a laptop is meaningless — telemedicine is about a pa
 
 ### Show it
 
-**Jitsi without Daily keys (default demo):** The server maps each **patient** to **one stable `meet.jit.si` room** (e.g. patient `PAT-001` → room `medcorepat001`). So **doctor and patient can each tap Start call** and still land in the **same** room — no copying URLs, no env variables. Both sides must use the **same `currentPatientId`** (`PAT-001` in the demo).
+**Jitsi without Daily keys (default demo):**The server maps each**patient**to**one stable `meet.jit.si`room**(e.g. patient`PAT-001`→ room`medcorepat001`). So**doctor and patient can each tap Start call**and still land in the**same**room — no copying URLs, no env variables. Both sides must use the**same `currentPatientId`** (`PAT-001` in the demo).
 
 **Two-device demo (low friction):**
 
-1. **Doctor** (laptop or phone): `DOC-001` → **Video Consult** → confirm patient field shows **PAT-001** → **Start call** and allow camera/mic.
-2. **Patient** (`PAT-001`): **Video Consult** → **Start call**.
+1. **Doctor**(laptop or phone): `DOC-001` →**Video Consult**→ confirm patient field shows**PAT-001**→**Start call** and allow camera/mic.
+2. **Patient**(`PAT-001`):**Video Consult**→**Start call**.
 3. You should see each other in one Jitsi room. If a rare lobby/moderator prompt appears on public `meet.jit.si`, **doctor joins first**, patient second, or both tap **Join** if asked.
 
-**Note:** With **Daily.co** configured, each session still gets its own Daily room; behavior differs from Jitsi fallback above.
+**Note:**With**Daily.co** configured, each session still gets its own Daily room; behavior differs from Jitsi fallback above.
 
 Option B — **Phone-only walkthrough**:
 
@@ -209,7 +221,7 @@ A desktop notification sitting in Notification Center is forgettable. A push sho
 ### Requires
 
 - HTTPS tunnel URL.
-- For *real* push: `WEB_PUSH_PUBLIC_KEY` / `WEB_PUSH_PRIVATE_KEY` set in `server/.env`.
+- For *real* push: `WEB_PUSH_PUBLIC_KEY`/`WEB_PUSH_PRIVATE_KEY`set in`server/.env`.
 - On iOS 16.4+, push **only works after "Add to Home Screen"** — install the PWA (Feature 1) before enabling push.
 - Notification permission granted.
 
@@ -218,9 +230,9 @@ A desktop notification sitting in Notification Center is forgettable. A push sho
 1. Phone: log in as Patient → **Reminders** page.
 2. Tap **Enable push reminders** — iOS/Android prompts "Allow notifications?" → Allow.
 3. Lock the phone (press power button).
-4. On the **laptop** (doctor role): Reminders page → pick a prescription → tap **Send test reminder**.
+4. On the **laptop**(doctor role): Reminders page → pick a prescription → tap**Send test reminder**.
 5. Phone lockscreen lights up with a MedCore notification: "Time for your medication — Metformin 500mg". Tap it → app opens directly to the Reminders screen.
-6. Back on the laptop, show the **adherence %** and **streak** widgets update when you tap TAKEN on the phone.
+6. Back on the laptop, show the **adherence %**and**streak** widgets update when you tap TAKEN on the phone.
 
 ### Talking point
 
@@ -232,7 +244,7 @@ A desktop notification sitting in Notification Center is forgettable. A push sho
 
 ### Why phone
 
-This isn't about your smartphone's browser — it's about using the **actual SMS app** to send a real text. A laptop can simulate this via the `/sms-inbox` form, but handing your phone to someone and letting *them* type `PATIENT PAT-001 PIN:4242` into Messages, then watching a reply come back ~2 seconds later, is the only way to feel the pitch: "This works when the internet doesn't."
+This isn't about your smartphone's browser — it's about using the **actual SMS app** to send a real text. A laptop can simulate this via the `/sms-inbox`form, but handing your phone to someone and letting *them* type`PATIENT PAT-001 PIN:4242` into Messages, then watching a reply come back ~2 seconds later, is the only way to feel the pitch: "This works when the internet doesn't."
 
 ### Requires
 
@@ -286,7 +298,7 @@ The **card UI** and QR read well on a small screen; the clinician story is “sa
 
 ### What the QR actually is (this MVP)
 
-The QR encodes an **HTTPS URL** on the **same origin** as the app (your tunnel or localhost), e.g. `https://<host>/patients/PAT-001?from=health-id`. The **system camera** can open that link in the browser. The signed-in user must be allowed to view the chart (e.g. doctor logged in on that device). If the camera opens a fresh browser profile with no session, sign in as doctor first or fall back to **Patients → search `PAT-001`**.
+The QR encodes an **HTTPS URL**on the**same origin**as the app (your tunnel or localhost), e.g. `https://<host>/patients/PAT-001?from=health-id`. The**system camera**can open that link in the browser. The signed-in user must be allowed to view the chart (e.g. doctor logged in on that device). If the camera opens a fresh browser profile with no session, sign in as doctor first or fall back to**Patients → search `PAT-001`**.
 
 ### Requires
 
@@ -295,10 +307,10 @@ The QR encodes an **HTTPS URL** on the **same origin** as the app (your tunnel o
 ### Show it
 
 1. **Patient phone**: **Health ID** — show the card + QR (audience sees a realistic “ID card”).
-2. **Doctor (laptop or phone, logged in as `DOC-001`)**: Scan the QR with the **camera app** (or open the encoded URL from a QR reader) to land on **PAT-001**’s chart, **or** use **Patients** → search `**PAT-001`**.
+2. **Doctor (laptop or phone, logged in as `DOC-001`)**: Scan the QR with the **camera app**(or open the encoded URL from a QR reader) to land on**PAT-001**’s chart, **or**use**Patients** → search `**PAT-001`**.
 
 - **Yes, the doctor can use their own phone** — sign in as doctor first if the browser opened by the camera has no MedCore session.  
-- The **Scan QR** control on the Patients list is **not** connected to a camera in this build; the **system camera** scanning the patient’s Health ID QR is the supported path.
+- The **Scan QR**control on the Patients list is**not**connected to a camera in this build; the**system camera** scanning the patient’s Health ID QR is the supported path.
 
 ### Talking point
 

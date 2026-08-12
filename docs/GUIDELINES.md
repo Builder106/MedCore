@@ -22,6 +22,7 @@ For example:
 --------------
 
 # Design system guidelines
+
 Rules for how the AI should make generations look like your company's design system
 
 Additionally, if you select a design system to use in the prompt box, you can reference
@@ -39,14 +40,17 @@ You can also create sub sections and add more specific details
 For example:
 
 ## Button
+
 The Button component is a fundamental interactive element in our design system, designed to trigger actions or navigate
 users through the application. It provides visual feedback and clear affordances to enhance user experience.
 
 ### Usage
+
 Buttons should be used for important actions that users need to take, such as form submissions, confirming choices,
 or initiating processes. They communicate interactivity and should have clear, action-oriented labels.
 
 ### Variants
+
 * Primary Button
   * Purpose : Used for the main action in a section or page
   * Visual Style : Bold, filled with the primary brand color
@@ -59,4 +63,5 @@ or initiating processes. They communicate interactivity and should have clear, a
   * Purpose : Used for the least important actions
   * Visual Style : Text-only with no border, using primary color
   * Usage : For actions that should be available but not emphasized
+
 -->

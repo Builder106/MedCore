@@ -1,6 +1,6 @@
 # Demo narration script
 
-One section per video. Each section has a **clean script** (the literal text fed to TTS) and **timed beats** (start time + line + on-screen action) for the editor.
+One section per video. Each section has a **clean script**(the literal text fed to TTS) and**timed beats** (start time + line + on-screen action) for the editor.
 
 Target ~140 wpm. Use contractions. Avoid superlatives. Don't announce transitions — the cuts do that.
 
@@ -28,7 +28,7 @@ Sign in with the doctor's ID and PIN — it's the same flow nurses run in the fi
 
 ## Adding a new section
 
-1. Author a `0N-<name>.feature` under `e2e/demo/features/`.
-2. Run `DEMO=1 npm run e2e:demo` to produce `e2e/demo-videos/<feature-slug>-<scenario-slug>.mp4`.
+1. Author a `0N-<name>.feature`under`e2e/demo/features/`.
+2. Run `DEMO=1 npm run e2e:demo`to produce`e2e/demo-videos/<feature-slug>-<scenario-slug>.mp4`.
 3. Add a section here with the same heading as the feature.
 4. Pick a TTS voice/speed, render the clean script, mux with `ffmpeg -i video.mp4 -i audio.mp3 -map 0:v -map 1:a -c:v copy -c:a aac -shortest out.mp4`.
