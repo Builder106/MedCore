@@ -30,8 +30,8 @@ Everything else (i18n, prescriptions, interactions, inbox, dashboards, admin) is
 
    Wait for **all three**:
 
-2. Scan the QR the tunnel script prints, or AirDrop the URL to your phone.
-3. **Sign in** when the app loads. Sessions use a secure HTTP-only cookie after you authenticate. Demo accounts (override PINs via `server/.env` if needed):
+1. Scan the QR the tunnel script prints, or AirDrop the URL to your phone.
+2. **Sign in** when the app loads. Sessions use a secure HTTP-only cookie after you authenticate. Demo accounts (override PINs via `server/.env` if needed):
 
   | Role    | User ID   | PIN    |
   | ------- | --------- | ------ |
@@ -75,24 +75,24 @@ Use **separate sign-ins**on each device (or**Sign out**and log in as the other d
 
   → Shows F6 (interactions) + F5 (reminder authoring).
 
-2. **[Phone / Patient]**Seconds later, a push notification pops. Tap it → opens the PWA to today's reminders. Tap**TAKEN**.
+1. **[Phone / Patient]**Seconds later, a push notification pops. Tap it → opens the PWA to today's reminders. Tap**TAKEN**.
 
   → Shows F5 delivery + PWA install.
 
-3. **[Laptop / Doctor]** Refresh the patient's adherence view. The tap you just did on the phone is already logged.
+1. **[Laptop / Doctor]** Refresh the patient's adherence view. The tap you just did on the phone is already logged.
 
   → Closes the loop; this is the "wow".
 
-4. **[Phone / Patient]**Open**Health ID**, show the QR (encodes a **full URL** to this demo instance: `/patients/PAT-001?from=health-id`).
-5. **[Doctor device — laptop or phone]**Logged in as**Doctor**, use the **system camera**to scan the QR (browser opens the patient chart on the same tunnel origin).**Patients → search `PAT-001`**still works the same if you skip the scan. The**Scan QR** button inside the Patients screen is cosmetic in this MVP — there is no in-app camera scanner wired up.
+1. **[Phone / Patient]**Open**Health ID**, show the QR (encodes a **full URL** to this demo instance: `/patients/PAT-001?from=health-id`).
+2. **[Doctor device — laptop or phone]**Logged in as**Doctor**, use the **system camera**to scan the QR (browser opens the patient chart on the same tunnel origin).**Patients → search `PAT-001`**still works the same if you skip the scan. The**Scan QR** button inside the Patients screen is cosmetic in this MVP — there is no in-app camera scanner wired up.
 
   → Shows F8 (portable ID + same chart from the clinician side).
 
-6. **[Laptop / Doctor]** **Voice Consult**. Record ~20 seconds, e.g. *"Patient reports headache, BP 140/90, assessment hypertension, plan amlodipine 5mg."* → SOAP note fills in.
+1. **[Laptop / Doctor]** **Voice Consult**. Record ~20 seconds, e.g. *"Patient reports headache, BP 140/90, assessment hypertension, plan amlodipine 5mg."* → SOAP note fills in.
 
   → Shows F2 (dictation + structured note on the **chart**— there is no separate “send recording to patient’s phone” in the MVP; the patient does**not** get a voice message or push from this flow).
 
-7. **[Both]** **Video consult**— ensure**both** devices use `**PAT-001`**as the active patient, then each taps**Start call**(see §3:**same Jitsi room** without copying a URL).
+1. **[Both]** **Video consult**— ensure**both** devices use `**PAT-001`**as the active patient, then each taps**Start call**(see §3:**same Jitsi room** without copying a URL).
 
   → F3.
 
@@ -160,9 +160,9 @@ Doctors in African clinics often consult bedside with a phone, not a laptop. The
 
   > "Chief complaint: 42-year-old female with two weeks of intermittent headaches, worse in the evenings. History: hypertension, on amlodipine. Assessment: likely tension-type headache, rule out poorly controlled blood pressure. Plan: recheck BP, trial of paracetamol, follow up in one week."
 
-6. Tap **Stop**→ tap**Generate consultation note**.
-7. The SOAP fields populate. Edit inline if you want, then **Save**.
-8. Show the past-recordings list at the bottom with the embedded audio player.
+1. Tap **Stop**→ tap**Generate consultation note**.
+2. The SOAP fields populate. Edit inline if you want, then **Save**.
+3. Show the past-recordings list at the bottom with the embedded audio player.
 
 ### Does the doctor “send” this to the patient
 

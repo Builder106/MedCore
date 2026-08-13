@@ -2,15 +2,15 @@
 
 MedCore ships two Playwright + Gherkin suites that share a step library and split at the config / feature-file level.
 
-| | **QA suite**|**Demo suite** |
+| | **QA suite** | **Demo suite** |
 | --- | --- | --- |
 | Config | [`e2e/playwright.config.ts`](../e2e/playwright.config.ts) | [`e2e/playwright.demo.config.ts`](../e2e/playwright.demo.config.ts) |
 | Features | [`e2e/features/`](../e2e/features/) | [`e2e/demo/features/`](../e2e/demo/features/) |
 | Goal | Verify behaviour. Fast, headless, parallel. | Produce narrative mp4 walkthroughs. |
-| Videos | `retain-on-failure`|`on` for every test |
+| Videos | `retain-on-failure` | `on` for every test |
 | Workers | parallel | 1 (single worker — the Playwright 0-byte first-test bug requires serial recording) |
 | Slowmo | none | 1200 ms per action |
-| Run | `npm run e2e`|`npm run e2e:demo` |
+| Run | `npm run e2e` | `npm run e2e:demo` |
 
 The shared step library is in [`e2e/steps/`](../e2e/steps/) and [`e2e/lib/hooks.ts`](../e2e/lib/hooks.ts). Phrasing is plain English (`When I click the "Sign in" button`), not selectors — reuse the same step text across QA and demo features.
 
@@ -42,13 +42,13 @@ Environment-variable knobs (defaults in parens):
 
 | Var | Default | Purpose |
 | --- | --- | --- |
-| `DEMO`| — | Master switch. Hooks no-op when not`1`. |
-| `DEMO_SLOWMO`|`1200` | Per-action pause in ms |
-| `DEMO_TYPE_DELAY`|`70` | Per-character delay in ms for slow typing |
-| `DEMO_TAIL_MS`|`1500` | Hold-final-frame duration at end of each scenario |
-| `DEMO_DWELL_MS`|`1500`| Default dwell for`dwellForDemo()` |
-| `DEMO_ZOOM`|`1.3`| CSS zoom factor on`<html>` |
-| `E2E_BASE_URL`|`http://localhost:5173` | App URL the suite drives |
+| `DEMO` | — | Master switch. Hooks no-op when not`1`. |
+| `DEMO_SLOWMO` | `1200` | Per-action pause in ms |
+| `DEMO_TYPE_DELAY` | `70` | Per-character delay in ms for slow typing |
+| `DEMO_TAIL_MS` | `1500` | Hold-final-frame duration at end of each scenario |
+| `DEMO_DWELL_MS` | `1500` | Default dwell for`dwellForDemo()` |
+| `DEMO_ZOOM` | `1.3` | CSS zoom factor on`<html>` |
+| `E2E_BASE_URL` | `http://localhost:5173` | App URL the suite drives |
 
 ## Known Playwright quirks
 

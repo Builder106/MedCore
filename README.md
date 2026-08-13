@@ -50,9 +50,9 @@ The Vite dev server proxies `/api/*`to the Express server on port 3001 and binds
 
 | Role | User ID | Default PIN |
 | ------ | --------- | ------------- |
-| Doctor | `DOC-001`|`4242` |
-| Patient | `PAT-001`|`1212` |
-| Admin | `ADM-001`|`3434` |
+| Doctor | `DOC-001` | `4242` |
+| Patient | `PAT-001` | `1212` |
+| Admin | `ADM-001` | `3434` |
 
 PINs are configurable in `server/.env`(see`server/.env.example`). For production, set `SESSION_SECRET` to a long random string (≥32 characters). If a login fails after editing PINs, restart the API to resync demo PINs — dev does this on every start.
 
