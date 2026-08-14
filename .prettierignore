@@ -1,0 +1,15 @@
+dist/
+node_modules/
+*.config.*
+scripts/
+e2e/
+coverage/
+*.lock
+*.log
+.vercel
+.env*
+*.md
+*.json
+*.yaml
+*.yml
+server/
