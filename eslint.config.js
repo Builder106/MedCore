@@ -13,7 +13,7 @@ export default tseslint.config(
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
       parserOptions: {
-        ecmaVersion: 'latest',
+        ecmaVersion: 'esnext',
         sourceType: 'module',
         ecmaFeatures: { jsx: true },
       },

@@ -74,53 +74,53 @@ describe('toFhirPatient', () => {
   });
 
   it('maps name correctly', () => {
-    const r = toFhirPatient(BASE_PATIENT) as any;
+    const r = toFhirPatient(BASE_PATIENT);
     expect(r.name[0].family).toBe('Wanjiru');
-    expect(r.name[0].given[0]).toBe('Amina');
+    expect(r.name[0].given?.[0]).toBe('Amina');
   });
 
   it('includes both patient-id and national-id identifiers', () => {
-    const r = toFhirPatient(BASE_PATIENT) as any;
-    const systems = r.identifier.map((i: any) => i.system);
+    const r = toFhirPatient(BASE_PATIENT);
+    const systems = r.identifier.map((i) => i.system);
     expect(systems).toContain('urn:medcore:patient-id');
     expect(systems).toContain('urn:medcore:national-id');
   });
 
   it('includes blood type extension when present', () => {
-    const r = toFhirPatient(BASE_PATIENT) as any;
-    expect(r.extension[0].url).toBe('urn:medcore:blood-type');
-    expect(r.extension[0].valueString).toBe('O+');
+    const r = toFhirPatient(BASE_PATIENT);
+    expect(r.extension?.[0].url).toBe('urn:medcore:blood-type');
+    expect(r.extension?.[0].valueString).toBe('O+');
   });
 
   it('omits extension when bloodType is null', () => {
-    const r = toFhirPatient({ ...BASE_PATIENT, bloodType: null }) as any;
+    const r = toFhirPatient({ ...BASE_PATIENT, bloodType: null });
     expect(r.extension).toBeUndefined();
   });
 
   it('parses allergies array and includes allergyIntolerance resources', () => {
-    const r = toFhirPatient(BASE_PATIENT) as any;
+    const r = toFhirPatient(BASE_PATIENT);
     expect(r.allergyIntolerance).toHaveLength(2);
-    expect(r.allergyIntolerance[0].code.text).toBe('Penicillin');
+    expect(r.allergyIntolerance?.[0].code.text).toBe('Penicillin');
   });
 
   it('omits allergyIntolerance when allergies is empty array', () => {
-    const r = toFhirPatient({ ...BASE_PATIENT, allergies: '[]' }) as any;
+    const r = toFhirPatient({ ...BASE_PATIENT, allergies: '[]' });
     expect(r.allergyIntolerance).toBeUndefined();
   });
 
   it('omits allergyIntolerance when allergies is malformed JSON', () => {
-    const r = toFhirPatient({ ...BASE_PATIENT, allergies: 'not-json' }) as any;
+    const r = toFhirPatient({ ...BASE_PATIENT, allergies: 'not-json' });
     expect(r.allergyIntolerance).toBeUndefined();
   });
 
   it('includes telecom with phone value', () => {
-    const r = toFhirPatient(BASE_PATIENT) as any;
+    const r = toFhirPatient(BASE_PATIENT);
     expect(r.telecom[0].system).toBe('phone');
     expect(r.telecom[0].value).toBe('+254700000001');
   });
 
   it('sets birthDate from dob', () => {
-    const r = toFhirPatient(BASE_PATIENT) as any;
+    const r = toFhirPatient(BASE_PATIENT);
     expect(r.birthDate).toBe('1990-05-15');
   });
 });
@@ -135,40 +135,40 @@ describe('toFhirMedicationRequest', () => {
   });
 
   it('maps active status correctly', () => {
-    const r = toFhirMedicationRequest(BASE_RX) as any;
+    const r = toFhirMedicationRequest(BASE_RX);
     expect(r.status).toBe('active');
   });
 
   it('maps discontinued to stopped', () => {
-    const r = toFhirMedicationRequest({ ...BASE_RX, status: 'discontinued' }) as any;
+    const r = toFhirMedicationRequest({ ...BASE_RX, status: 'discontinued' });
     expect(r.status).toBe('stopped');
   });
 
   it('maps unknown status to unknown', () => {
-    const r = toFhirMedicationRequest({ ...BASE_RX, status: 'anything_else' }) as any;
+    const r = toFhirMedicationRequest({ ...BASE_RX, status: 'anything_else' });
     expect(r.status).toBe('unknown');
   });
 
   it('sets subject reference to Patient/id', () => {
-    const r = toFhirMedicationRequest(BASE_RX) as any;
+    const r = toFhirMedicationRequest(BASE_RX);
     expect(r.subject.reference).toBe('Patient/PAT-001');
   });
 
   it('includes dosage instruction combining dosage, frequency, duration', () => {
-    const r = toFhirMedicationRequest(BASE_RX) as any;
+    const r = toFhirMedicationRequest(BASE_RX);
     expect(r.dosageInstruction[0].text).toContain('500mg');
     expect(r.dosageInstruction[0].text).toContain('Twice daily');
     expect(r.dosageInstruction[0].text).toContain('for 3 months');
   });
 
   it('omits note when notes is null', () => {
-    const r = toFhirMedicationRequest(BASE_RX) as any;
+    const r = toFhirMedicationRequest(BASE_RX);
     expect(r.note).toBeUndefined();
   });
 
   it('includes note when notes is set', () => {
-    const r = toFhirMedicationRequest({ ...BASE_RX, notes: 'Take with food' }) as any;
-    expect(r.note[0].text).toBe('Take with food');
+    const r = toFhirMedicationRequest({ ...BASE_RX, notes: 'Take with food' });
+    expect(r.note?.[0].text).toBe('Take with food');
   });
 });
 
@@ -182,52 +182,52 @@ describe('toFhirObservation', () => {
   });
 
   it('sets status to final when reviewedByDoctor = 1', () => {
-    const r = toFhirObservation(BASE_LAB) as any;
+    const r = toFhirObservation(BASE_LAB);
     expect(r.status).toBe('final');
   });
 
   it('sets status to preliminary when not reviewed', () => {
-    const r = toFhirObservation({ ...BASE_LAB, reviewedByDoctor: 0 }) as any;
+    const r = toFhirObservation({ ...BASE_LAB, reviewedByDoctor: 0 });
     expect(r.status).toBe('preliminary');
   });
 
   it('concatenates value and unit in valueString', () => {
-    const r = toFhirObservation(BASE_LAB) as any;
+    const r = toFhirObservation(BASE_LAB);
     expect(r.valueString).toBe('7.2 %');
   });
 
   it('uses value alone when unit is null', () => {
-    const r = toFhirObservation({ ...BASE_LAB, unit: null }) as any;
+    const r = toFhirObservation({ ...BASE_LAB, unit: null });
     expect(r.valueString).toBe('7.2');
   });
 
   it('includes referenceRange when set', () => {
-    const r = toFhirObservation(BASE_LAB) as any;
-    expect(r.referenceRange[0].text).toBe('< 5.7%');
+    const r = toFhirObservation(BASE_LAB);
+    expect(r.referenceRange?.[0].text).toBe('< 5.7%');
   });
 
   it('omits referenceRange when null', () => {
-    const r = toFhirObservation({ ...BASE_LAB, referenceRange: null }) as any;
+    const r = toFhirObservation({ ...BASE_LAB, referenceRange: null });
     expect(r.referenceRange).toBeUndefined();
   });
 
   it('includes interpretation code H for high status', () => {
-    const r = toFhirObservation(BASE_LAB) as any;
-    expect(r.interpretation[0].coding[0].code).toBe('H');
+    const r = toFhirObservation(BASE_LAB);
+    expect(r.interpretation?.[0].coding[0].code).toBe('H');
   });
 
   it('includes interpretation code AA for critical status', () => {
-    const r = toFhirObservation({ ...BASE_LAB, status: 'critical' }) as any;
-    expect(r.interpretation[0].coding[0].code).toBe('AA');
+    const r = toFhirObservation({ ...BASE_LAB, status: 'critical' });
+    expect(r.interpretation?.[0].coding[0].code).toBe('AA');
   });
 
   it('omits interpretation for normal status', () => {
-    const r = toFhirObservation({ ...BASE_LAB, status: 'normal' }) as any;
+    const r = toFhirObservation({ ...BASE_LAB, status: 'normal' });
     expect(r.interpretation).toBeUndefined();
   });
 
   it('includes laboratory category coding', () => {
-    const r = toFhirObservation(BASE_LAB) as any;
+    const r = toFhirObservation(BASE_LAB);
     expect(r.category[0].coding[0].code).toBe('laboratory');
   });
 });
@@ -242,38 +242,38 @@ describe('toFhirImmunization', () => {
   });
 
   it('always sets status to completed', () => {
-    const r = toFhirImmunization(BASE_VAX) as any;
+    const r = toFhirImmunization(BASE_VAX);
     expect(r.status).toBe('completed');
   });
 
   it('sets patient reference', () => {
-    const r = toFhirImmunization(BASE_VAX) as any;
+    const r = toFhirImmunization(BASE_VAX);
     expect(r.patient.reference).toBe('Patient/PAT-001');
   });
 
   it('includes lotNumber when batch is set', () => {
-    const r = toFhirImmunization(BASE_VAX) as any;
+    const r = toFhirImmunization(BASE_VAX);
     expect(r.lotNumber).toBe('BATCH-42');
   });
 
   it('omits lotNumber when batch is null', () => {
-    const r = toFhirImmunization({ ...BASE_VAX, batch: null }) as any;
+    const r = toFhirImmunization({ ...BASE_VAX, batch: null });
     expect(r.lotNumber).toBeUndefined();
   });
 
   it('includes protocolApplied for dose > 1', () => {
-    const r = toFhirImmunization({ ...BASE_VAX, doseNumber: 2 }) as any;
-    expect(r.protocolApplied[0].doseNumberPositiveInt).toBe(2);
+    const r = toFhirImmunization({ ...BASE_VAX, doseNumber: 2 });
+    expect(r.protocolApplied?.[0].doseNumberPositiveInt).toBe(2);
   });
 
   it('omits protocolApplied for dose 1', () => {
-    const r = toFhirImmunization(BASE_VAX) as any;
+    const r = toFhirImmunization(BASE_VAX);
     expect(r.protocolApplied).toBeUndefined();
   });
 
   it('includes performer when administeredBy is set', () => {
-    const r = toFhirImmunization(BASE_VAX) as any;
-    expect(r.performer[0].actor.display).toBe('Dr. Omondi');
+    const r = toFhirImmunization(BASE_VAX);
+    expect(r.performer?.[0].actor.display).toBe('Dr. Omondi');
   });
 });
 
@@ -287,43 +287,43 @@ describe('toFhirEncounter', () => {
   });
 
   it('always sets status to finished', () => {
-    const r = toFhirEncounter(BASE_ENC) as any;
+    const r = toFhirEncounter(BASE_ENC);
     expect(r.status).toBe('finished');
   });
 
   it('maps consultation type to AMB class code', () => {
-    const r = toFhirEncounter(BASE_ENC) as any;
+    const r = toFhirEncounter(BASE_ENC);
     expect(r.class.code).toBe('AMB');
   });
 
   it('maps emergency type to EMER class code', () => {
-    const r = toFhirEncounter({ ...BASE_ENC, type: 'emergency' }) as any;
+    const r = toFhirEncounter({ ...BASE_ENC, type: 'emergency' });
     expect(r.class.code).toBe('EMER');
   });
 
   it('maps telemedicine type to VR class code', () => {
-    const r = toFhirEncounter({ ...BASE_ENC, type: 'telemedicine' }) as any;
+    const r = toFhirEncounter({ ...BASE_ENC, type: 'telemedicine' });
     expect(r.class.code).toBe('VR');
   });
 
   it('defaults unknown type to AMB', () => {
-    const r = toFhirEncounter({ ...BASE_ENC, type: 'other' }) as any;
+    const r = toFhirEncounter({ ...BASE_ENC, type: 'other' });
     expect(r.class.code).toBe('AMB');
   });
 
   it('includes reasonCode when chiefComplaint is set', () => {
-    const r = toFhirEncounter(BASE_ENC) as any;
-    expect(r.reasonCode[0].text).toBe('Headache');
+    const r = toFhirEncounter(BASE_ENC);
+    expect(r.reasonCode?.[0].text).toBe('Headache');
   });
 
   it('omits reasonCode when chiefComplaint is null', () => {
-    const r = toFhirEncounter({ ...BASE_ENC, chiefComplaint: null }) as any;
+    const r = toFhirEncounter({ ...BASE_ENC, chiefComplaint: null });
     expect(r.reasonCode).toBeUndefined();
   });
 
   it('includes diagnosis when set', () => {
-    const r = toFhirEncounter(BASE_ENC) as any;
-    expect(r.diagnosis[0].condition.display).toBe('Tension headache');
+    const r = toFhirEncounter(BASE_ENC);
+    expect(r.diagnosis?.[0].condition.display).toBe('Tension headache');
   });
 });
 

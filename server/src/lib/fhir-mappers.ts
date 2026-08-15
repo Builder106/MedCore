@@ -11,6 +11,99 @@ export interface FhirBundle {
   entry: { fullUrl: string; resource: FhirResource }[];
 }
 
+export interface FhirExtension {
+  url: string;
+  valueString?: string;
+  [key: string]: unknown;
+}
+
+export interface FhirIdentifier {
+  system: string;
+  value: string;
+}
+
+export interface FhirName {
+  use?: string;
+  family?: string;
+  given?: string[];
+}
+
+export interface FhirTelecom {
+  system: string;
+  value: string;
+  use?: string;
+}
+
+export interface FhirAllergyIntolerance {
+  resourceType: 'AllergyIntolerance';
+  id: string;
+  patient: { reference: string };
+  code: { text: string };
+  clinicalStatus: { coding: Array<{ code: string }> };
+}
+
+export interface FhirPatient extends FhirResource {
+  resourceType: 'Patient';
+  id: string;
+  meta: { lastUpdated: string };
+  identifier: FhirIdentifier[];
+  name: FhirName[];
+  telecom: FhirTelecom[];
+  birthDate: string;
+  extension?: FhirExtension[];
+  allergyIntolerance?: FhirAllergyIntolerance[];
+}
+
+export interface FhirMedicationRequest extends FhirResource {
+  resourceType: 'MedicationRequest';
+  id: string;
+  status: string;
+  intent: string;
+  medicationCodeableConcept: { text: string };
+  subject: { reference: string };
+  authoredOn: string;
+  dosageInstruction: Array<{ text: string }>;
+  note?: Array<{ text: string }>;
+}
+
+export interface FhirObservation extends FhirResource {
+  resourceType: 'Observation';
+  id: string;
+  status: string;
+  category: Array<{ coding: Array<{ system: string; code: string; display: string }> }>;
+  code: { text: string };
+  subject: { reference: string };
+  effectiveDateTime: string;
+  valueString: string;
+  referenceRange?: Array<{ text: string }>;
+  interpretation?: Array<{ coding: Array<{ system: string; code: string; display: string }> }>;
+}
+
+export interface FhirImmunization extends FhirResource {
+  resourceType: 'Immunization';
+  id: string;
+  status: string;
+  vaccineCode: { text: string };
+  patient: { reference: string };
+  occurrenceDateTime: string;
+  protocolApplied?: Array<{ doseNumberPositiveInt: number }>;
+  lotNumber?: string;
+  site?: { text: string };
+  performer?: Array<{ actor: { display: string | null } }>;
+}
+
+export interface FhirEncounter extends FhirResource {
+  resourceType: 'Encounter';
+  id: string;
+  status: string;
+  class: { system: string; code: string; display: string };
+  type: Array<{ text: string }>;
+  subject: { reference: string };
+  period: { start: string };
+  reasonCode?: Array<{ text: string }>;
+  diagnosis?: Array<{ condition: { display: string | null } }>;
+}
+
 type PatientRow = {
   id: string; firstName: string; lastName: string; dob: string;
   phone: string; nationalId: string; bloodType: string | null;
@@ -34,7 +127,7 @@ type EncounterRow = {
   chiefComplaint: string | null; diagnosis: string | null;
 };
 
-export function toFhirPatient(p: PatientRow): FhirResource {
+export function toFhirPatient(p: PatientRow): FhirPatient {
   const allergies = (() => { try { return JSON.parse(p.allergies) as string[]; } catch { return []; } })();
   return {
     resourceType: 'Patient',
@@ -50,7 +143,7 @@ export function toFhirPatient(p: PatientRow): FhirResource {
     ...(p.bloodType ? { extension: [{ url: 'urn:medcore:blood-type', valueString: p.bloodType }] } : {}),
     ...(allergies.length ? {
       allergyIntolerance: allergies.map((a, i) => ({
-        resourceType: 'AllergyIntolerance',
+        resourceType: 'AllergyIntolerance' as const,
         id: `allergy-${p.id}-${i}`,
         patient: { reference: `Patient/${p.id}` },
         code: { text: a },
@@ -60,7 +153,7 @@ export function toFhirPatient(p: PatientRow): FhirResource {
   };
 }
 
-export function toFhirMedicationRequest(rx: PrescriptionRow): FhirResource {
+export function toFhirMedicationRequest(rx: PrescriptionRow): FhirMedicationRequest {
   const statusMap: Record<string, string> = { active: 'active', completed: 'completed', discontinued: 'stopped' };
   return {
     resourceType: 'MedicationRequest',
@@ -77,7 +170,7 @@ export function toFhirMedicationRequest(rx: PrescriptionRow): FhirResource {
   };
 }
 
-export function toFhirObservation(lab: LabRow): FhirResource {
+export function toFhirObservation(lab: LabRow): FhirObservation {
   const interpCode: Record<string, string> = { high: 'H', low: 'L', critical: 'AA', normal: 'N' };
   return {
     resourceType: 'Observation',
@@ -95,7 +188,7 @@ export function toFhirObservation(lab: LabRow): FhirResource {
   };
 }
 
-export function toFhirImmunization(vax: VaxRow): FhirResource {
+export function toFhirImmunization(vax: VaxRow): FhirImmunization {
   return {
     resourceType: 'Immunization',
     id: vax.id,
@@ -110,7 +203,7 @@ export function toFhirImmunization(vax: VaxRow): FhirResource {
   };
 }
 
-export function toFhirEncounter(enc: EncounterRow): FhirResource {
+export function toFhirEncounter(enc: EncounterRow): FhirEncounter {
   const classCode: Record<string, { code: string; display: string }> = {
     consultation: { code: 'AMB', display: 'ambulatory' },
     follow_up: { code: 'AMB', display: 'ambulatory' },
