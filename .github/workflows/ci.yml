@@ -19,6 +19,7 @@ jobs:
           fetch-depth: 0
       - uses: gitleaks/gitleaks-action@v3
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITLEAKS_NOTIFY_USER_LIST: ""
 
   lint:
@@ -45,6 +46,21 @@ jobs:
       - run: npm ci --legacy-peer-deps
       - run: npm run format
 
+  typecheck:
+    name: Typecheck & Compliance
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - name: Open-source license compliance scan (frontend)
+        run: npx license-checker --summary --production
+      - name: Typecheck frontend
+        run: npx tsc --noEmit
+
   lint-server:
     name: Lint (server)
     runs-on: ubuntu-24.04
@@ -70,7 +86,7 @@ jobs:
       - run: npm --prefix server run format
 
   test:
-    name: Test & build
+    name: Test & Build
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
@@ -91,11 +107,53 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Verify bundle size budget
+        run: |
+          echo "=== Production bundle assets ==="
+          ls -lh dist/
+          TOTAL_KB=$(du -sk dist | cut -f1)
+          echo "Total bundle size: ${TOTAL_KB} KB"
+          if [ "$TOTAL_KB" -gt 15000 ]; then
+            echo "Bundle size exceeded 15MB budget ceiling: ${TOTAL_KB} KB"
+            exit 1
+          fi
+
       - name: Install server dependencies
         run: npm --prefix server ci
+
+      - name: Open-source license compliance scan (server)
+        run: npx --prefix server license-checker --summary --production
 
       - name: Typecheck server
         run: npm --prefix server run typecheck
 
       - name: Run server tests
         run: npm --prefix server test
+
+  e2e:
+    name: E2E & Accessibility
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci --legacy-peer-deps
+      - run: npm --prefix server ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: Run E2E suite
+        run: npm run e2e
+      - name: Upload Playwright artifacts on failure
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-results
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 7
+          if-no-files-found: ignore
