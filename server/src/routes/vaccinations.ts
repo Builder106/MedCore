@@ -1,6 +1,6 @@
+import { and, desc, eq, isNotNull, lt } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { and, desc, eq, isNotNull, lt } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 import { newId } from '../lib/ids.js';
 
@@ -10,11 +10,19 @@ export const vaccinationsRouter = Router();
 vaccinationsRouter.get('/vaccinations', async (req, res) => {
   const { db } = await getDb();
   const now = Date.now();
-  const rows = req.query.overdue === 'true'
-    ? await db.select().from(schema.vaccinations)
-        .where(and(isNotNull(schema.vaccinations.nextDueAt), lt(schema.vaccinations.nextDueAt, now)))
-        .orderBy(desc(schema.vaccinations.nextDueAt))
-    : await db.select().from(schema.vaccinations).orderBy(desc(schema.vaccinations.administeredAt));
+  const rows =
+    req.query.overdue === 'true'
+      ? await db
+          .select()
+          .from(schema.vaccinations)
+          .where(
+            and(isNotNull(schema.vaccinations.nextDueAt), lt(schema.vaccinations.nextDueAt, now))
+          )
+          .orderBy(desc(schema.vaccinations.nextDueAt))
+      : await db
+          .select()
+          .from(schema.vaccinations)
+          .orderBy(desc(schema.vaccinations.administeredAt));
   res.json({ vaccinations: rows });
 });
 
@@ -47,10 +55,13 @@ vaccinationsRouter.post('/vaccinations', async (req, res) => {
   }
   const { db } = await getDb();
   const id = newId('VAC');
-  await db.insert(schema.vaccinations).values({
-    id,
-    ...parsed.data,
-    createdAt: Date.now(),
-  }).run();
+  await db
+    .insert(schema.vaccinations)
+    .values({
+      id,
+      ...parsed.data,
+      createdAt: Date.now(),
+    })
+    .run();
   res.status(201).json({ id });
 });

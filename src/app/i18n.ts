@@ -1,11 +1,11 @@
 import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
+import { initReactI18next } from 'react-i18next';
+import ar from '../locales/ar/translation.json';
 import en from '../locales/en/translation.json';
 import fr from '../locales/fr/translation.json';
-import ar from '../locales/ar/translation.json';
-import sw from '../locales/sw/translation.json';
 import ha from '../locales/ha/translation.json';
+import sw from '../locales/sw/translation.json';
 
 export const SUPPORTED_LANGUAGES = [
   { code: 'en', name: 'English', nativeName: 'English', flag: '🇬🇧', dir: 'ltr' as const },
@@ -45,7 +45,7 @@ if (!i18n.isInitialized) {
     })
     .then(() => applyDirection(i18n.language));
 
-  i18n.on('languageChanged', (lng) => applyDirection(lng));
+  i18n.on('languageChanged', lng => applyDirection(lng));
 }
 
 export default i18n;

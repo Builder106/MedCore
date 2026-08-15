@@ -28,16 +28,13 @@ export function hasAIKey(): boolean {
 export const hasClaudeKey = hasAIKey;
 
 function buildMessages(params: AICallParams): AIMessage[] {
-  return [
-    { role: 'system', content: params.system },
-    ...params.messages,
-  ];
+  return [{ role: 'system', content: params.system }, ...params.messages];
 }
 
 function openRouterHeaders() {
   return {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${env.OPENROUTER_API_KEY}`,
+    Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
     'HTTP-Referer': 'https://medcore.local',
     'X-Title': 'MedCore',
   };
@@ -73,7 +70,7 @@ export async function callClaude(params: AICallParams): Promise<AIResponse> {
 
 export async function callClaudeStream(
   params: AICallParams,
-  onDelta: (chunk: string) => void,
+  onDelta: (chunk: string) => void
 ): Promise<AIResponse> {
   if (!hasAIKey()) {
     const text = mockResponse(params);
@@ -142,7 +139,12 @@ function mockResponse(params: AICallParams): string {
   const lastUser = [...params.messages].reverse().find(m => m.role === 'user');
   if (params.system.includes('JSON array of risk flags')) {
     return JSON.stringify([
-      { severity: 'medium', category: 'adherence', message: 'Demo: no AI key configured. Set OPENROUTER_API_KEY to enable risk flags.', action: 'Configure OPENROUTER_API_KEY' },
+      {
+        severity: 'medium',
+        category: 'adherence',
+        message: 'Demo: no AI key configured. Set OPENROUTER_API_KEY to enable risk flags.',
+        action: 'Configure OPENROUTER_API_KEY',
+      },
     ]);
   }
   if (params.system.includes('summary in 4 sections')) {

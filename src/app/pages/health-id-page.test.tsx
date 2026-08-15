@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppProvider } from '../context/AppContext';
 import { HealthIdPage, healthIdChartUrl } from './HealthIdPage';
 
@@ -13,7 +13,7 @@ vi.mock('qrcode.react', () => ({
 describe('healthIdChartUrl', () => {
   it('builds patient deep link with query', () => {
     expect(healthIdChartUrl('PAT-001', 'https://demo.example')).toBe(
-      'https://demo.example/patients/PAT-001?from=health-id',
+      'https://demo.example/patients/PAT-001?from=health-id'
     );
   });
 });
@@ -29,11 +29,11 @@ describe('HealthIdPage', () => {
             JSON.stringify({
               user: { id: 'PAT-001', name: 'Test Patient', role: 'patient' },
             }),
-            { status: 200, headers: { 'Content-Type': 'application/json' } },
+            { status: 200, headers: { 'Content-Type': 'application/json' } }
           );
         }
         return new Response('{}', { status: 404 });
-      }),
+      })
     );
   });
 
@@ -43,7 +43,7 @@ describe('HealthIdPage', () => {
         <AppProvider>
           <HealthIdPage />
         </AppProvider>
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     await screen.findByText(/Your Health ID/i);

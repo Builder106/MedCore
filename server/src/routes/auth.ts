@@ -1,9 +1,9 @@
+import { eq } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
-import { verifyPin, hashPin, isLegacyHash } from '../lib/pin.js';
 import { env } from '../lib/env.js';
+import { hashPin, isLegacyHash, verifyPin } from '../lib/pin.js';
 import { signSessionToken } from '../lib/session-token.js';
 import { SESSION_COOKIE } from '../middleware/session.js';
 
@@ -56,14 +56,13 @@ authRouter.post('/auth/login', async (req, res) => {
     update.pinHash = hashPin(pin);
     update.pinRotatedAt = Date.now();
   }
-  await db
-    .update(schema.users)
-    .set(update)
-    .where(eq(schema.users.id, user.id))
-    .run();
+  await db.update(schema.users).set(update).where(eq(schema.users.id, user.id)).run();
 
   const { maxAgeMs, secure } = sessionCookieOptions();
-  const token = await signSessionToken({ userId: user.id, role: user.role, name: user.name }, env.SESSION_SECRET);
+  const token = await signSessionToken(
+    { userId: user.id, role: user.role, name: user.name },
+    env.SESSION_SECRET
+  );
   res.cookie(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: 'lax',

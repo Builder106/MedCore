@@ -1,7 +1,7 @@
-import { useState, FormEvent } from 'react';
-import { Navigate, useLocation } from 'react-router';
-import { useTranslation } from 'react-i18next';
 import { Hexagon } from 'lucide-react';
+import { FormEvent, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Navigate, useLocation } from 'react-router';
 import { useApp } from '../context/AppContext';
 
 export function LoginPage() {
@@ -9,7 +9,9 @@ export function LoginPage() {
   const { sessionLoading, sessionUser, login } = useApp();
   const location = useLocation();
   const returnTo = (() => {
-    const st = location.state as { from?: { pathname?: string; search?: string; hash?: string } } | null;
+    const st = location.state as {
+      from?: { pathname?: string; search?: string; hash?: string };
+    } | null;
     const f = st?.from;
     if (!f?.pathname) return '/';
     return `${f.pathname}${f.search ?? ''}${f.hash ?? ''}`;
@@ -47,7 +49,9 @@ export function LoginPage() {
           </div>
           <div>
             <h1 className="text-lg font-semibold text-[#1F1B18]">MedCore</h1>
-            <p className="text-[11px] uppercase tracking-[0.12em] text-[#5B5149]">{t('auth.subtitle')}</p>
+            <p className="text-[11px] uppercase tracking-[0.12em] text-[#5B5149]">
+              {t('auth.subtitle')}
+            </p>
           </div>
         </div>
 
@@ -55,7 +59,10 @@ export function LoginPage() {
 
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
-            <label htmlFor="login-user" className="block text-[11px] uppercase tracking-[0.1em] text-[#5B5149] mb-1.5">
+            <label
+              htmlFor="login-user"
+              className="block text-[11px] uppercase tracking-[0.1em] text-[#5B5149] mb-1.5"
+            >
               {t('auth.userId')}
             </label>
             <input
@@ -70,7 +77,10 @@ export function LoginPage() {
             />
           </div>
           <div>
-            <label htmlFor="login-pin" className="block text-[11px] uppercase tracking-[0.1em] text-[#5B5149] mb-1.5">
+            <label
+              htmlFor="login-pin"
+              className="block text-[11px] uppercase tracking-[0.1em] text-[#5B5149] mb-1.5"
+            >
               {t('auth.pin')}
             </label>
             <input

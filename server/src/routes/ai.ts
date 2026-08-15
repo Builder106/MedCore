@@ -1,34 +1,44 @@
+import { and, desc, eq, gte } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { and, desc, eq, gte } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
-import { callClaude, callClaudeStream } from '../lib/ai.js';
 import {
-  SUMMARIZE_SYSTEM_PROMPT,
   CHAT_SYSTEM_PROMPT,
   RISK_FLAGS_SYSTEM_PROMPT,
+  SUMMARIZE_SYSTEM_PROMPT,
   formatPatientContext,
   type PatientContext,
 } from '../lib/ai-prompts.js';
+import { callClaude, callClaudeStream } from '../lib/ai.js';
 
 export const aiRouter = Router();
 
 async function buildPatientContext(patientId: string): Promise<PatientContext | null> {
   const { db } = await getDb();
-  const [patient] = await db.select().from(schema.patients).where(eq(schema.patients.id, patientId));
+  const [patient] = await db
+    .select()
+    .from(schema.patients)
+    .where(eq(schema.patients.id, patientId));
   if (!patient) return null;
 
   const activeRx = await db
     .select()
     .from(schema.prescriptions)
-    .where(and(eq(schema.prescriptions.patientId, patientId), eq(schema.prescriptions.status, 'active')))
+    .where(
+      and(eq(schema.prescriptions.patientId, patientId), eq(schema.prescriptions.status, 'active'))
+    )
     .orderBy(desc(schema.prescriptions.createdAt));
 
   const thirtyDaysAgo = Date.now() - 1000 * 60 * 60 * 24 * 30;
   const recentEncounters = await db
     .select()
     .from(schema.encounters)
-    .where(and(eq(schema.encounters.patientId, patientId), gte(schema.encounters.encounterDate, thirtyDaysAgo)))
+    .where(
+      and(
+        eq(schema.encounters.patientId, patientId),
+        gte(schema.encounters.encounterDate, thirtyDaysAgo)
+      )
+    )
     .orderBy(desc(schema.encounters.encounterDate))
     .limit(5);
 
@@ -46,7 +56,9 @@ async function buildPatientContext(patientId: string): Promise<PatientContext | 
     .orderBy(desc(schema.adherenceEvents.recordedAt))
     .limit(30);
   const takenCount = adherenceEvents.filter(e => e.status === 'taken').length;
-  const adherenceRate = adherenceEvents.length ? Math.round((takenCount / adherenceEvents.length) * 100) : undefined;
+  const adherenceRate = adherenceEvents.length
+    ? Math.round((takenCount / adherenceEvents.length) * 100)
+    : undefined;
 
   return {
     id: patient.id,
@@ -56,13 +68,22 @@ async function buildPatientContext(patientId: string): Promise<PatientContext | 
     allergies: safeJsonArray(patient.allergies),
     bloodType: patient.bloodType,
     insuranceScheme: patient.insuranceScheme,
-    activeMedications: activeRx.map(r => ({ drugName: r.drugName, dosage: r.dosage, frequency: r.frequency })),
+    activeMedications: activeRx.map(r => ({
+      drugName: r.drugName,
+      dosage: r.dosage,
+      frequency: r.frequency,
+    })),
     recentEncounters: recentEncounters.map(e => ({
       date: new Date(e.encounterDate).toISOString().slice(0, 10),
       chiefComplaint: e.chiefComplaint,
       diagnosis: e.diagnosis,
     })),
-    recentLabs: recentLabs.map(l => ({ testName: l.testName, value: l.value, unit: l.unit, status: l.status })),
+    recentLabs: recentLabs.map(l => ({
+      testName: l.testName,
+      value: l.value,
+      unit: l.unit,
+      status: l.status,
+    })),
     adherenceRate,
   };
 }
@@ -109,7 +130,7 @@ aiRouter.post('/ai/summarize', async (req, res) => {
       },
       chunk => {
         res.write(`data: ${JSON.stringify({ type: 'delta', text: chunk })}\n\n`);
-      },
+      }
     );
     res.write(`data: ${JSON.stringify({ type: 'done', provider: result.provider })}\n\n`);
     res.end();
@@ -127,10 +148,14 @@ aiRouter.post('/ai/summarize', async (req, res) => {
 
 const ChatBody = z.object({
   patientId: z.string(),
-  messages: z.array(z.object({
-    role: z.enum(['user', 'assistant']),
-    content: z.string(),
-  })).min(1),
+  messages: z
+    .array(
+      z.object({
+        role: z.enum(['user', 'assistant']),
+        content: z.string(),
+      })
+    )
+    .min(1),
   stream: z.boolean().optional().default(false),
 });
 
@@ -160,7 +185,7 @@ aiRouter.post('/ai/chat', async (req, res) => {
       },
       chunk => {
         res.write(`data: ${JSON.stringify({ type: 'delta', text: chunk })}\n\n`);
-      },
+      }
     );
     res.write(`data: ${JSON.stringify({ type: 'done', provider: result.provider })}\n\n`);
     res.end();

@@ -135,7 +135,11 @@
 
   html {
     font-size: var(--font-size);
-    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    font-family:
+      'IBM Plex Sans',
+      system-ui,
+      -apple-system,
+      sans-serif;
   }
 
   h1 {
@@ -184,12 +188,23 @@
 }
 
 @keyframes afPulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.7; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
 }
 
 .af-elevate {
-  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease, background-color 220ms ease;
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
   will-change: transform;
 }
 
@@ -199,7 +214,9 @@
 }
 
 .af-press {
-  transition: transform 160ms ease, filter 160ms ease;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease;
 }
 
 .af-press:active {

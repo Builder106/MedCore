@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { env } from '../lib/env.js';
 import { readCookieHeader, verifySessionToken } from '../lib/session-token.js';
 

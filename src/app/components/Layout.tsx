@@ -1,14 +1,35 @@
-import { useState, useEffect } from 'react';
+import {
+  Activity,
+  Bell,
+  Globe2,
+  Hexagon,
+  LogOut,
+  Menu,
+  Shield,
+  Smartphone,
+  Wifi,
+  WifiOff,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Outlet, useLocation } from 'react-router';
-import { Sidebar } from './Sidebar';
+import { SUPPORTED_LANGUAGES, useApp } from '../context/AppContext';
 import { BottomNav } from './BottomNav';
 import { MobileDrawer } from './MobileDrawer';
-import { useApp, SUPPORTED_LANGUAGES } from '../context/AppContext';
-import { useTranslation } from 'react-i18next';
-import { Wifi, WifiOff, Bell, Shield, Activity, Smartphone, Globe2, Menu, Hexagon, LogOut } from 'lucide-react';
+import { Sidebar } from './Sidebar';
 
 export function Layout() {
-  const { offlineMode, role, lang, setLang, lowBandwidth, setLowBandwidth, setOfflineMode, sessionUser, signOut } = useApp();
+  const {
+    offlineMode,
+    role,
+    lang,
+    setLang,
+    lowBandwidth,
+    setLowBandwidth,
+    setOfflineMode,
+    sessionUser,
+    signOut,
+  } = useApp();
   const { t } = useTranslation();
   const location = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -41,9 +62,15 @@ export function Layout() {
 
   const pageLabel = routeLabels[location.pathname] || '';
   const roleLabel =
-    role === 'patient' ? t('role.patientPortal') : role === 'doctor' ? t('role.clinicalWorkspace') : t('role.facilityAdmin');
-  const roleDot = role === 'patient' ? 'bg-teal-500' : role === 'doctor' ? 'bg-violet-500' : 'bg-amber-500';
-  const roleAvatar = role === 'patient' ? 'bg-teal-700' : role === 'doctor' ? 'bg-violet-700' : 'bg-amber-700';
+    role === 'patient'
+      ? t('role.patientPortal')
+      : role === 'doctor'
+        ? t('role.clinicalWorkspace')
+        : t('role.facilityAdmin');
+  const roleDot =
+    role === 'patient' ? 'bg-teal-500' : role === 'doctor' ? 'bg-violet-500' : 'bg-amber-500';
+  const roleAvatar =
+    role === 'patient' ? 'bg-teal-700' : role === 'doctor' ? 'bg-violet-700' : 'bg-amber-700';
   const currentLang = SUPPORTED_LANGUAGES.find(l => l.code === lang) ?? SUPPORTED_LANGUAGES[0];
 
   return (
@@ -70,7 +97,9 @@ export function Layout() {
                   <Hexagon className="w-4 h-4 fill-current" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[13px] font-medium text-[#1F1B18] truncate">{pageLabel || 'MedCore'}</div>
+                  <div className="text-[13px] font-medium text-[#1F1B18] truncate">
+                    {pageLabel || 'MedCore'}
+                  </div>
                   <div className="text-[10px] uppercase tracking-[0.14em] text-[#5B5149] truncate flex items-center gap-1">
                     <span className={`inline-block w-1.5 h-1.5 rounded-full ${roleDot}`} />
                     {roleLabel}
@@ -79,7 +108,9 @@ export function Layout() {
               </div>
               <div className="hidden lg:flex items-center gap-2">
                 <span className={`w-2 h-2 rounded-full ${roleDot}`} />
-                <span className="text-[11px] text-[#5B5149] uppercase tracking-[0.14em]">{roleLabel}</span>
+                <span className="text-[11px] text-[#5B5149] uppercase tracking-[0.14em]">
+                  {roleLabel}
+                </span>
                 {pageLabel && (
                   <>
                     <span className="text-[#B8A589]">/</span>
@@ -153,7 +184,9 @@ export function Layout() {
                 <Bell className="w-[18px] h-[18px] text-[#5B5149]" />
                 <span className="af-pulse-dot absolute top-2.5 right-2.5 w-1.5 h-1.5 bg-[#A63D32] rounded-full" />
               </button>
-              <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-[12px] ${roleAvatar}`}>
+              <div
+                className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-[12px] ${roleAvatar}`}
+              >
                 {role === 'patient' ? 'AO' : role === 'doctor' ? 'WN' : 'AD'}
               </div>
             </div>

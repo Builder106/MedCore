@@ -4,10 +4,7 @@ export function buildVideoRoomEmbedUrl(roomUrl: string): string {
   }
   try {
     const u = new URL(roomUrl);
-    const jitsiConfig = [
-      'config.prejoinPageEnabled=false',
-      'config.disableDeepLinking=true',
-    ];
+    const jitsiConfig = ['config.prejoinPageEnabled=false', 'config.disableDeepLinking=true'];
     const existing = u.hash ? u.hash.replace(/^#/, '') : '';
     const merged = existing ? `${existing}&${jitsiConfig.join('&')}` : jitsiConfig.join('&');
     u.hash = merged;

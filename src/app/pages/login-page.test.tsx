@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppProvider } from '../context/AppContext';
 import { LoginPage } from './LoginPage';
 
@@ -18,11 +18,11 @@ beforeEach(() => {
       if (url.includes('/api/auth/login') && init?.method === 'POST') {
         return new Response(
           JSON.stringify({ user: { id: 'DOC-001', name: 'Dr. Test', role: 'doctor' } }),
-          { status: 200, headers: { 'Content-Type': 'application/json' } },
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
         );
       }
       return new Response('{}', { status: 404 });
-    }),
+    })
   );
 });
 
@@ -35,7 +35,7 @@ describe('LoginPage', () => {
         <AppProvider>
           <LoginPage />
         </AppProvider>
-      </MemoryRouter>,
+      </MemoryRouter>
     );
 
     fireEvent.change(screen.getByLabelText(/user id/i), { target: { value: 'DOC-001' } });
@@ -45,7 +45,7 @@ describe('LoginPage', () => {
     await waitFor(() => {
       expect(fetchMock).toHaveBeenCalledWith(
         '/api/auth/login',
-        expect.objectContaining({ method: 'POST', credentials: 'include' }),
+        expect.objectContaining({ method: 'POST', credentials: 'include' })
       );
     });
   });

@@ -1,11 +1,15 @@
 import '@testing-library/jest-dom/vitest';
-import { afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
+import { afterEach, vi } from 'vitest';
 
 afterEach(() => {
   cleanup();
   if (typeof localStorage !== 'undefined') {
-    try { localStorage.clear(); } catch { /* noop */ }
+    try {
+      localStorage.clear();
+    } catch {
+      /* noop */
+    }
   }
 });
 

@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
-import { resetDbCacheForTests, getDb, schema } from '../db/index.js';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { getDb, resetDbCacheForTests, schema } from '../db/index.js';
 
 process.env.DATABASE_URL = ':memory:';
 process.env.DEMO_DOCTOR_PIN = '4242';
@@ -16,7 +16,12 @@ delete process.env.AT_API_KEY;
 
 const realFetch = globalThis.fetch;
 globalThis.fetch = ((input: Parameters<typeof fetch>[0], init?: Parameters<typeof fetch>[1]) => {
-  const url = typeof input === 'string' ? input : input instanceof URL ? input.toString() : (input as Request).url;
+  const url =
+    typeof input === 'string'
+      ? input
+      : input instanceof URL
+        ? input.toString()
+        : (input as Request).url;
   if (url.includes('api.fda.gov')) {
     return Promise.resolve(new Response('', { status: 404 }));
   }
@@ -59,26 +64,34 @@ describe('Drug interactions (F6)', () => {
   });
 
   it('returns warning for metformin + ibuprofen', async () => {
-    const res = await agent.get('/api/interactions').query({ drug1: 'Metformin', drug2: 'Ibuprofen' });
+    const res = await agent
+      .get('/api/interactions')
+      .query({ drug1: 'Metformin', drug2: 'Ibuprofen' });
     expect(res.body.level).toBe('warning');
   });
 
   it('blocks critical interaction in prescription save without acknowledgement', async () => {
     const { db } = await getDb();
-    await db.insert(schema.prescriptions).values({
-      id: 'RX-WARFARIN',
+    await db
+      .insert(schema.prescriptions)
+      .values({
+        id: 'RX-WARFARIN',
+        patientId: 'PAT-001',
+        doctorId: 'DOC-001',
+        drugName: 'Warfarin',
+        dosage: '5mg',
+        frequency: 'Once daily',
+        duration: '1 month',
+        status: 'active',
+        createdAt: Date.now(),
+      })
+      .run();
+    const res = await agent.post('/api/prescriptions').send({
       patientId: 'PAT-001',
       doctorId: 'DOC-001',
-      drugName: 'Warfarin',
-      dosage: '5mg',
+      drugName: 'Aspirin',
+      dosage: '81mg',
       frequency: 'Once daily',
-      duration: '1 month',
-      status: 'active',
-      createdAt: Date.now(),
-    }).run();
-    const res = await agent.post('/api/prescriptions').send({
-      patientId: 'PAT-001', doctorId: 'DOC-001',
-      drugName: 'Aspirin', dosage: '81mg', frequency: 'Once daily',
     });
     expect(res.status).toBe(409);
     expect(res.body.error).toBe('critical_interaction');
@@ -86,8 +99,11 @@ describe('Drug interactions (F6)', () => {
 
   it('allows critical interaction with acknowledgement + valid PIN', async () => {
     const res = await agent.post('/api/prescriptions').send({
-      patientId: 'PAT-001', doctorId: 'DOC-001',
-      drugName: 'Aspirin', dosage: '81mg', frequency: 'Once daily',
+      patientId: 'PAT-001',
+      doctorId: 'DOC-001',
+      drugName: 'Aspirin',
+      dosage: '81mg',
+      frequency: 'Once daily',
       acknowledgedInteractions: [{ drugB: 'Warfarin', level: 'critical' }],
       pin: '4242',
     });
@@ -97,24 +113,33 @@ describe('Drug interactions (F6)', () => {
 
 describe('SMS offline (F4)', () => {
   it('rejects unrecognised commands', async () => {
-    const res = await request(app).post('/api/sms/inbound').send({ from: '+254700000001', text: 'hello' });
+    const res = await request(app)
+      .post('/api/sms/inbound')
+      .send({ from: '+254700000001', text: 'hello' });
     expect(res.body.ok).toBe(false);
   });
 
   it('rejects invalid PIN and increments failed attempts', async () => {
-    const res = await request(app).post('/api/sms/inbound').send({ from: '+254700000001', text: 'PATIENT PAT-001 PIN:0000' });
+    const res = await request(app)
+      .post('/api/sms/inbound')
+      .send({ from: '+254700000001', text: 'PATIENT PAT-001 PIN:0000' });
     expect(res.body.error).toBe('pin_invalid');
   });
 
   it('returns patient summary with valid PIN', async () => {
-    const res = await request(app).post('/api/sms/inbound').send({ from: '+254700000001', text: 'PATIENT PAT-001 PIN:4242' });
+    const res = await request(app)
+      .post('/api/sms/inbound')
+      .send({ from: '+254700000001', text: 'PATIENT PAT-001 PIN:4242' });
     expect(res.body.ok).toBe(true);
     expect(res.body.reply).toContain('Amina');
     expect(res.body.reply).not.toMatch(/Okafor.*NHIF/);
   });
 
   it('saves a NOTE under 140 chars', async () => {
-    const res = await request(app).post('/api/sms/inbound').send({ from: '+254700000001', text: 'NOTE PAT-001 PIN:4242 follow up next week, increase metformin' });
+    const res = await request(app).post('/api/sms/inbound').send({
+      from: '+254700000001',
+      text: 'NOTE PAT-001 PIN:4242 follow up next week, increase metformin',
+    });
     expect(res.body.ok).toBe(true);
     expect(res.body.reply).toContain('Note saved');
   });
@@ -147,7 +172,10 @@ describe('Voice transcription (F2)', () => {
       .field('patientId', 'PAT-001')
       .field('doctorId', 'DOC-001')
       .field('source', 'doctor_consult')
-      .attach('audio', Buffer.from('fake audio data'), { filename: 'test.webm', contentType: 'audio/webm' });
+      .attach('audio', Buffer.from('fake audio data'), {
+        filename: 'test.webm',
+        contentType: 'audio/webm',
+      });
     expect(res.status).toBe(200);
     expect(res.body.transcript.length).toBeGreaterThan(0);
     expect(res.body.provider).toBe('mock');
@@ -156,15 +184,21 @@ describe('Voice transcription (F2)', () => {
 
 describe('Video consult (F3)', () => {
   it('creates a session with a mock room URL', async () => {
-    const res = await agent.post('/api/video/sessions').send({ patientId: 'PAT-001', doctorId: 'DOC-001' });
+    const res = await agent
+      .post('/api/video/sessions')
+      .send({ patientId: 'PAT-001', doctorId: 'DOC-001' });
     expect(res.status).toBe(201);
     expect(res.body.room.url).toMatch(/https?:/);
     expect(['daily', 'mock']).toContain(res.body.room.provider);
   });
 
   it('reuses the same Jitsi room URL for the same patient without Daily keys', async () => {
-    const a = await agent.post('/api/video/sessions').send({ patientId: 'PAT-001', doctorId: 'DOC-001' });
-    const b = await agent.post('/api/video/sessions').send({ patientId: 'PAT-001', doctorId: 'DOC-001' });
+    const a = await agent
+      .post('/api/video/sessions')
+      .send({ patientId: 'PAT-001', doctorId: 'DOC-001' });
+    const b = await agent
+      .post('/api/video/sessions')
+      .send({ patientId: 'PAT-001', doctorId: 'DOC-001' });
     expect(a.status).toBe(201);
     expect(b.status).toBe(201);
     expect(a.body.room.provider).toBe('mock');

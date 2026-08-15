@@ -1,0 +1,11 @@
+dist/
+node_modules/
+*.config.*
+coverage/
+*.lock
+*.log
+.env*
+*.md
+*.json
+*.yaml
+*.yml

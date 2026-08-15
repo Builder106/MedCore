@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { loadPrefs, savePrefs, PREFS_STORAGE_KEY } from './AppContext';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { loadPrefs, PREFS_STORAGE_KEY, savePrefs } from './AppContext';
 
 function makeMemoryStorage() {
   const store = new Map<string, string>();
@@ -31,7 +31,9 @@ describe('AppContext preference persistence', () => {
 
   it('uses the versioned storage key', () => {
     savePrefs({ lang: 'ar' });
-    const raw = (window as unknown as { localStorage: Storage }).localStorage.getItem(PREFS_STORAGE_KEY);
+    const raw = (window as unknown as { localStorage: Storage }).localStorage.getItem(
+      PREFS_STORAGE_KEY
+    );
     expect(raw).toBeTruthy();
     expect(JSON.parse(raw!)).toEqual({ lang: 'ar' });
   });
@@ -39,13 +41,16 @@ describe('AppContext preference persistence', () => {
   it('ignores unknown languages when loading', () => {
     (window as unknown as { localStorage: Storage }).localStorage.setItem(
       PREFS_STORAGE_KEY,
-      JSON.stringify({ lang: 'xx', currentPatientId: 'PAT-1' }),
+      JSON.stringify({ lang: 'xx', currentPatientId: 'PAT-1' })
     );
     expect(loadPrefs()).toEqual({ currentPatientId: 'PAT-1' });
   });
 
   it('returns empty object for malformed JSON', () => {
-    (window as unknown as { localStorage: Storage }).localStorage.setItem(PREFS_STORAGE_KEY, '{not json');
+    (window as unknown as { localStorage: Storage }).localStorage.setItem(
+      PREFS_STORAGE_KEY,
+      '{not json'
+    );
     expect(loadPrefs()).toEqual({});
   });
 

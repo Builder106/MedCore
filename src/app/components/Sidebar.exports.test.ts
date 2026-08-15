@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { doctorItems, patientItems, adminItems, type NavItem } from './Sidebar';
+import { describe, expect, it } from 'vitest';
+import { adminItems, doctorItems, patientItems, type NavItem } from './Sidebar';
 
 function assertShape(items: NavItem[]) {
   expect(Array.isArray(items)).toBe(true);

@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { auditLog as mockAudit } from '../data/mock-data';
 import { Download } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { ResponsiveTable, type TableColumn } from '../components/ui/responsive-table';
+import { auditLog as mockAudit } from '../data/mock-data';
 import { listAudit, type AuditEntry } from '../services/api';
 
 interface AuditRow {
@@ -45,28 +45,36 @@ export function AuditLogPage() {
       } catch {
         if (cancelled) return;
         setApiOk(false);
-        setRows(mockAudit.map(a => ({
-          id: a.id,
-          timestamp: new Date(a.timestamp).getTime(),
-          patientId: a.patientId,
-          accessedBy: a.accessedBy,
-          role: a.role,
-          action: a.action,
-          section: a.section,
-          facility: a.facility,
-        })));
+        setRows(
+          mockAudit.map(a => ({
+            id: a.id,
+            timestamp: new Date(a.timestamp).getTime(),
+            patientId: a.patientId,
+            accessedBy: a.accessedBy,
+            role: a.role,
+            action: a.action,
+            section: a.section,
+            facility: a.facility,
+          }))
+        );
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const columns: TableColumn<AuditRow>[] = [
     {
       key: 'ts',
       header: 'Timestamp',
-      cell: a => <span className="whitespace-nowrap text-[12px] text-gray-500">{new Date(a.timestamp).toLocaleString()}</span>,
+      cell: a => (
+        <span className="whitespace-nowrap text-[12px] text-gray-500">
+          {new Date(a.timestamp).toLocaleString()}
+        </span>
+      ),
     },
     { key: 'pid', header: 'Patient ID', cell: a => a.patientId },
     { key: 'by', header: 'Accessed By', cell: a => a.accessedBy },
@@ -79,7 +87,11 @@ export function AuditLogPage() {
     {
       key: 'section',
       header: 'Section',
-      cell: a => <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-[12px]">{a.section}</span>,
+      cell: a => (
+        <span className="bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full text-[12px]">
+          {a.section}
+        </span>
+      ),
     },
     { key: 'facility', header: 'Facility', cell: a => a.facility, hideOnMobile: true },
   ];

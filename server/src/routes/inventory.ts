@@ -1,6 +1,6 @@
+import { desc, eq } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { desc, eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 import { newId } from '../lib/ids.js';
 import { requireRole } from '../middleware/rbac.js';
@@ -34,12 +34,15 @@ inventoryRouter.post('/inventory', requireRole('admin'), async (req, res) => {
   const now = Date.now();
   const { db } = await getDb();
   const id = newId('INV');
-  await db.insert(schema.inventory).values({
-    id,
-    ...parsed.data,
-    updatedAt: now,
-    createdAt: now,
-  }).run();
+  await db
+    .insert(schema.inventory)
+    .values({
+      id,
+      ...parsed.data,
+      updatedAt: now,
+      createdAt: now,
+    })
+    .run();
   res.status(201).json({ id });
 });
 

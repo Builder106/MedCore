@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core';
+import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const users = sqliteTable('users', {
   id: text('id').primaryKey(),
@@ -33,7 +33,9 @@ export const prescriptions = sqliteTable('prescriptions', {
   dosage: text('dosage').notNull(),
   frequency: text('frequency').notNull(),
   duration: text('duration'),
-  status: text('status', { enum: ['active', 'completed', 'discontinued'] }).notNull().default('active'),
+  status: text('status', { enum: ['active', 'completed', 'discontinued'] })
+    .notNull()
+    .default('active'),
   notes: text('notes'),
   createdAt: integer('created_at').notNull(),
 });
@@ -43,9 +45,13 @@ export const medicationReminders = sqliteTable('medication_reminders', {
   prescriptionId: text('prescription_id').notNull(),
   patientId: text('patient_id').notNull(),
   scheduledTime: integer('scheduled_time').notNull(),
-  status: text('status', { enum: ['pending', 'sent', 'confirmed', 'skipped', 'unknown'] }).notNull().default('pending'),
+  status: text('status', { enum: ['pending', 'sent', 'confirmed', 'skipped', 'unknown'] })
+    .notNull()
+    .default('pending'),
   response: text('response'),
-  channel: text('channel', { enum: ['sms', 'push'] }).notNull().default('sms'),
+  channel: text('channel', { enum: ['sms', 'push'] })
+    .notNull()
+    .default('sms'),
   createdAt: integer('created_at').notNull(),
   respondedAt: integer('responded_at'),
 });
@@ -69,7 +75,9 @@ export const smsMessages = sqliteTable('sms_messages', {
   patientId: text('patient_id'),
   doctorId: text('doctor_id'),
   responseSnippet: text('response_snippet'),
-  status: text('status', { enum: ['received', 'replied', 'failed', 'pin_invalid', 'locked'] }).notNull().default('received'),
+  status: text('status', { enum: ['received', 'replied', 'failed', 'pin_invalid', 'locked'] })
+    .notNull()
+    .default('received'),
   expiresAt: integer('expires_at'),
   createdAt: integer('created_at').notNull(),
 });
@@ -82,7 +90,9 @@ export const interactionEvents = sqliteTable('interaction_events', {
   drugB: text('drug_b').notNull(),
   level: text('level', { enum: ['critical', 'warning', 'info'] }).notNull(),
   message: text('message').notNull(),
-  source: text('source', { enum: ['openfda', 'rxnorm', 'fallback'] }).notNull().default('fallback'),
+  source: text('source', { enum: ['openfda', 'rxnorm', 'fallback'] })
+    .notNull()
+    .default('fallback'),
   overridden: integer('overridden').notNull().default(0),
   overrideReason: text('override_reason'),
   createdAt: integer('created_at').notNull(),
@@ -120,7 +130,9 @@ export const videoConsultations = sqliteTable('video_consultations', {
   doctorId: text('doctor_id').notNull(),
   roomUrl: text('room_url').notNull(),
   roomName: text('room_name').notNull(),
-  status: text('status', { enum: ['scheduled', 'in_progress', 'completed', 'cancelled'] }).notNull().default('scheduled'),
+  status: text('status', { enum: ['scheduled', 'in_progress', 'completed', 'cancelled'] })
+    .notNull()
+    .default('scheduled'),
   startedAt: integer('started_at'),
   endedAt: integer('ended_at'),
   durationSec: real('duration_sec'),
@@ -145,7 +157,9 @@ export const appointments = sqliteTable('appointments', {
   scheduledFor: integer('scheduled_for').notNull(),
   durationMin: integer('duration_min').notNull().default(20),
   reason: text('reason'),
-  status: text('status', { enum: ['scheduled', 'checked_in', 'completed', 'cancelled', 'no_show'] }).notNull().default('scheduled'),
+  status: text('status', { enum: ['scheduled', 'checked_in', 'completed', 'cancelled', 'no_show'] })
+    .notNull()
+    .default('scheduled'),
   notes: text('notes'),
   createdAt: integer('created_at').notNull(),
 });
@@ -158,7 +172,9 @@ export const labResults = sqliteTable('lab_results', {
   value: text('value').notNull(),
   unit: text('unit'),
   referenceRange: text('reference_range'),
-  status: text('status', { enum: ['normal', 'high', 'low', 'critical'] }).notNull().default('normal'),
+  status: text('status', { enum: ['normal', 'high', 'low', 'critical'] })
+    .notNull()
+    .default('normal'),
   collectedAt: integer('collected_at').notNull(),
   reviewedByDoctor: integer('reviewed_by_doctor').notNull().default(0),
   plainEnglish: text('plain_english'),
@@ -185,9 +201,13 @@ export const referrals = sqliteTable('referrals', {
   toDoctorId: text('to_doctor_id'),
   toFacility: text('to_facility'),
   specialty: text('specialty'),
-  urgency: text('urgency', { enum: ['routine', 'urgent', 'emergency'] }).notNull().default('routine'),
+  urgency: text('urgency', { enum: ['routine', 'urgent', 'emergency'] })
+    .notNull()
+    .default('routine'),
   reason: text('reason').notNull(),
-  status: text('status', { enum: ['pending', 'accepted', 'completed', 'declined'] }).notNull().default('pending'),
+  status: text('status', { enum: ['pending', 'accepted', 'completed', 'declined'] })
+    .notNull()
+    .default('pending'),
   createdAt: integer('created_at').notNull(),
   respondedAt: integer('responded_at'),
 });
@@ -196,9 +216,13 @@ export const consentGrants = sqliteTable('consent_grants', {
   id: text('id').primaryKey(),
   patientId: text('patient_id').notNull(),
   grantedTo: text('granted_to').notNull(),
-  grantedToType: text('granted_to_type', { enum: ['doctor', 'facility'] }).notNull().default('doctor'),
+  grantedToType: text('granted_to_type', { enum: ['doctor', 'facility'] })
+    .notNull()
+    .default('doctor'),
   sections: text('sections').notNull().default('[]'),
-  status: text('status', { enum: ['active', 'revoked'] }).notNull().default('active'),
+  status: text('status', { enum: ['active', 'revoked'] })
+    .notNull()
+    .default('active'),
   grantedAt: integer('granted_at').notNull(),
   revokedAt: integer('revoked_at'),
   expiresAt: integer('expires_at'),
@@ -225,7 +249,9 @@ export const staff = sqliteTable('staff', {
   specialty: text('specialty'),
   email: text('email'),
   phone: text('phone'),
-  status: text('status', { enum: ['active', 'on_leave', 'inactive'] }).notNull().default('active'),
+  status: text('status', { enum: ['active', 'on_leave', 'inactive'] })
+    .notNull()
+    .default('active'),
   facilityId: text('facility_id'),
   createdAt: integer('created_at').notNull(),
 });
@@ -249,7 +275,9 @@ export const encounters = sqliteTable('encounters', {
   patientId: text('patient_id').notNull(),
   doctorId: text('doctor_id').notNull(),
   encounterDate: integer('encounter_date').notNull(),
-  type: text('type', { enum: ['consultation', 'follow_up', 'emergency', 'telemedicine'] }).notNull().default('consultation'),
+  type: text('type', { enum: ['consultation', 'follow_up', 'emergency', 'telemedicine'] })
+    .notNull()
+    .default('consultation'),
   chiefComplaint: text('chief_complaint'),
   diagnosis: text('diagnosis'),
   notes: text('notes'),

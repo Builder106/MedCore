@@ -9,7 +9,10 @@ export async function apiFetch<T = unknown>(path: string, init?: RequestInit): P
   const text = await res.text();
   const data = text ? JSON.parse(text) : null;
   if (!res.ok) {
-    const err = new Error(data?.error || `API ${res.status}`) as Error & { status?: number; payload?: unknown };
+    const err = new Error(data?.error || `API ${res.status}`) as Error & {
+      status?: number;
+      payload?: unknown;
+    };
     err.status = res.status;
     err.payload = data;
     throw err;
@@ -26,7 +29,9 @@ export interface InteractionResult {
 }
 
 export async function checkInteraction(drug1: string, drug2: string) {
-  return apiFetch<InteractionResult>(`/interactions?drug1=${encodeURIComponent(drug1)}&drug2=${encodeURIComponent(drug2)}`);
+  return apiFetch<InteractionResult>(
+    `/interactions?drug1=${encodeURIComponent(drug1)}&drug2=${encodeURIComponent(drug2)}`
+  );
 }
 
 export interface Prescription {
@@ -94,10 +99,17 @@ export interface SmsMessage {
   createdAt: number;
 }
 
-export async function listSmsMessages(params: { doctorId?: string; patientId?: string; type?: string } = {}) {
+export async function listSmsMessages(
+  params: { doctorId?: string; patientId?: string; type?: string } = {}
+) {
   const qs = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => { if (v) qs.set(k, v); });
-  return apiFetch<{ messages: SmsMessage[]; mockOutbox: { to: string; body: string; at: number }[] }>(`/sms/messages${qs.size ? `?${qs}` : ''}`);
+  Object.entries(params).forEach(([k, v]) => {
+    if (v) qs.set(k, v);
+  });
+  return apiFetch<{
+    messages: SmsMessage[];
+    mockOutbox: { to: string; body: string; at: number }[];
+  }>(`/sms/messages${qs.size ? `?${qs}` : ''}`);
 }
 
 export async function simulateInboundSms(from: string, text: string) {
@@ -119,7 +131,15 @@ export async function getAdherence(patientId: string) {
 }
 
 export async function getReminders(patientId: string) {
-  return apiFetch<{ reminders: { id: string; scheduledTime: number; status: string; channel: string; prescriptionId: string }[] }>(`/patients/${patientId}/reminders`);
+  return apiFetch<{
+    reminders: {
+      id: string;
+      scheduledTime: number;
+      status: string;
+      channel: string;
+      prescriptionId: string;
+    }[];
+  }>(`/patients/${patientId}/reminders`);
 }
 
 export async function dispatchNow(patientId: string) {
@@ -144,31 +164,67 @@ export async function createReminderSchedule(body: {
   endDate: string;
   channel: 'sms' | 'push';
 }) {
-  return apiFetch<{ created: number }>('/reminders', { method: 'POST', body: JSON.stringify(body) });
+  return apiFetch<{ created: number }>('/reminders', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 }
 
 export async function getVapidKey() {
   return apiFetch<{ publicKey: string | null }>('/push/vapid');
 }
 
-export async function subscribePush(body: { userId: string; endpoint: string; keys: { p256dh: string; auth: string } }) {
-  return apiFetch<{ ok: boolean }>('/push/subscribe', { method: 'POST', body: JSON.stringify(body) });
+export async function subscribePush(body: {
+  userId: string;
+  endpoint: string;
+  keys: { p256dh: string; auth: string };
+}) {
+  return apiFetch<{ ok: boolean }>('/push/subscribe', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 }
 
-export async function transcribe(audio: Blob, params: { patientId: string; doctorId?: string; source?: 'doctor_consult' | 'patient_message'; durationSec?: number }) {
+export async function transcribe(
+  audio: Blob,
+  params: {
+    patientId: string;
+    doctorId?: string;
+    source?: 'doctor_consult' | 'patient_message';
+    durationSec?: number;
+  }
+) {
   const fd = new FormData();
   fd.append('audio', audio, 'consult.webm');
   fd.append('patientId', params.patientId);
   if (params.doctorId) fd.append('doctorId', params.doctorId);
   fd.append('source', params.source ?? 'doctor_consult');
   if (params.durationSec != null) fd.append('durationSec', String(params.durationSec));
-  const res = await fetch(`${base}/transcribe`, { method: 'POST', body: fd, credentials: 'include' });
+  const res = await fetch(`${base}/transcribe`, {
+    method: 'POST',
+    body: fd,
+    credentials: 'include',
+  });
   if (!res.ok) throw new Error(`transcribe ${res.status}`);
-  return (await res.json()) as { id: string; transcript: string; provider: 'openai' | 'mock'; audioExpiresAt: number };
+  return (await res.json()) as {
+    id: string;
+    transcript: string;
+    provider: 'openai' | 'mock';
+    audioExpiresAt: number;
+  };
 }
 
 export async function listVoiceRecordings(patientId: string) {
-  return apiFetch<{ recordings: { id: string; transcript: string; createdAt: number; audioPath: string | null; source: string; durationSec?: number | null }[] }>(`/patients/${patientId}/voice`);
+  return apiFetch<{
+    recordings: {
+      id: string;
+      transcript: string;
+      createdAt: number;
+      audioPath: string | null;
+      source: string;
+      durationSec?: number | null;
+    }[];
+  }>(`/patients/${patientId}/voice`);
 }
 
 export async function saveConsultationNote(body: {
@@ -182,11 +238,21 @@ export async function saveConsultationNote(body: {
   plan?: string;
   followUp?: string;
 }) {
-  return apiFetch<{ id: string }>('/consultation-notes', { method: 'POST', body: JSON.stringify(body) });
+  return apiFetch<{ id: string }>('/consultation-notes', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 }
 
-export async function createVideoSession(body: { patientId: string; doctorId: string; reason?: string }) {
-  return apiFetch<{ id: string; room: { url: string; name: string; provider: 'daily' | 'mock' } }>('/video/sessions', { method: 'POST', body: JSON.stringify(body) });
+export async function createVideoSession(body: {
+  patientId: string;
+  doctorId: string;
+  reason?: string;
+}) {
+  return apiFetch<{ id: string; room: { url: string; name: string; provider: 'daily' | 'mock' } }>(
+    '/video/sessions',
+    { method: 'POST', body: JSON.stringify(body) }
+  );
 }
 
 export async function startVideoSession(id: string) {
@@ -194,7 +260,10 @@ export async function startVideoSession(id: string) {
 }
 
 export async function endVideoSession(id: string, notes?: string) {
-  return apiFetch<{ ok: boolean; durationSec: number }>(`/video/sessions/${id}/end`, { method: 'POST', body: JSON.stringify({ notes }) });
+  return apiFetch<{ ok: boolean; durationSec: number }>(`/video/sessions/${id}/end`, {
+    method: 'POST',
+    body: JSON.stringify({ notes }),
+  });
 }
 
 export interface Patient {
@@ -231,9 +300,13 @@ export interface Appointment {
   createdAt: number;
 }
 
-export async function listAppointments(params: { doctorId?: string; patientId?: string; from?: number } = {}) {
+export async function listAppointments(
+  params: { doctorId?: string; patientId?: string; from?: number } = {}
+) {
   const qs = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => { if (v != null) qs.set(k, String(v)); });
+  Object.entries(params).forEach(([k, v]) => {
+    if (v != null) qs.set(k, String(v));
+  });
   return apiFetch<{ appointments: Appointment[] }>(`/appointments${qs.size ? `?${qs}` : ''}`);
 }
 
@@ -253,8 +326,14 @@ export async function createAppointment(body: {
   return apiFetch<{ id: string }>('/appointments', { method: 'POST', body: JSON.stringify(body) });
 }
 
-export async function updateAppointment(id: string, patch: Partial<{ status: Appointment['status']; notes: string; scheduledFor: number }>) {
-  return apiFetch<{ ok: boolean }>(`/appointments/${id}`, { method: 'PATCH', body: JSON.stringify(patch) });
+export async function updateAppointment(
+  id: string,
+  patch: Partial<{ status: Appointment['status']; notes: string; scheduledFor: number }>
+) {
+  return apiFetch<{ ok: boolean }>(`/appointments/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
 }
 
 export interface LabResult {
@@ -340,7 +419,9 @@ export interface Referral {
 
 export async function listReferrals(params: { patientId?: string; doctorId?: string } = {}) {
   const qs = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => { if (v) qs.set(k, v); });
+  Object.entries(params).forEach(([k, v]) => {
+    if (v) qs.set(k, v);
+  });
   return apiFetch<{ referrals: Referral[] }>(`/referrals${qs.size ? `?${qs}` : ''}`);
 }
 
@@ -356,8 +437,14 @@ export async function createReferral(body: {
   return apiFetch<{ id: string }>('/referrals', { method: 'POST', body: JSON.stringify(body) });
 }
 
-export async function updateReferralStatus(id: string, status: 'accepted' | 'completed' | 'declined') {
-  return apiFetch<{ ok: boolean }>(`/referrals/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) });
+export async function updateReferralStatus(
+  id: string,
+  status: 'accepted' | 'completed' | 'declined'
+) {
+  return apiFetch<{ ok: boolean }>(`/referrals/${id}/status`, {
+    method: 'PATCH',
+    body: JSON.stringify({ status }),
+  });
 }
 
 export interface ConsentGrant {
@@ -374,7 +461,9 @@ export interface ConsentGrant {
 
 export async function listConsent(params: { patientId?: string; grantedTo?: string } = {}) {
   const qs = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => { if (v) qs.set(k, v); });
+  Object.entries(params).forEach(([k, v]) => {
+    if (v) qs.set(k, v);
+  });
   return apiFetch<{ grants: ConsentGrant[] }>(`/consent${qs.size ? `?${qs}` : ''}`);
 }
 
@@ -406,9 +495,13 @@ export interface AuditEntry {
   createdAt: number;
 }
 
-export async function listAudit(params: { patientId?: string; userId?: string; from?: number; to?: number; limit?: number } = {}) {
+export async function listAudit(
+  params: { patientId?: string; userId?: string; from?: number; to?: number; limit?: number } = {}
+) {
   const qs = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => { if (v != null) qs.set(k, String(v)); });
+  Object.entries(params).forEach(([k, v]) => {
+    if (v != null) qs.set(k, String(v));
+  });
   return apiFetch<{ entries: AuditEntry[] }>(`/audit${qs.size ? `?${qs}` : ''}`);
 }
 
@@ -446,8 +539,14 @@ export async function listInventory() {
   return apiFetch<{ items: InventoryItem[]; lowStockCount: number }>('/inventory');
 }
 
-export async function updateInventory(id: string, patch: Partial<{ quantity: number; reorderLevel: number; location: string; expiresAt: number }>) {
-  return apiFetch<{ ok: boolean }>(`/inventory/${id}`, { method: 'PATCH', body: JSON.stringify(patch) });
+export async function updateInventory(
+  id: string,
+  patch: Partial<{ quantity: number; reorderLevel: number; location: string; expiresAt: number }>
+) {
+  return apiFetch<{ ok: boolean }>(`/inventory/${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify(patch),
+  });
 }
 
 export interface Encounter {
@@ -549,7 +648,9 @@ export async function aiChat(body: {
 }
 
 export async function exportFhirBundle(patientId: string): Promise<string> {
-  const data = await apiFetch<unknown>(`/fhir/Patient/${encodeURIComponent(patientId)}/$everything`);
+  const data = await apiFetch<unknown>(
+    `/fhir/Patient/${encodeURIComponent(patientId)}/$everything`
+  );
   return JSON.stringify(data, null, 2);
 }
 
@@ -563,7 +664,10 @@ export interface RegistryVerifyResult {
 }
 
 export async function verifyNationalId(body: { patientId?: string; nationalId?: string }) {
-  return apiFetch<RegistryVerifyResult>('/registry/verify', { method: 'POST', body: JSON.stringify(body) });
+  return apiFetch<RegistryVerifyResult>('/registry/verify', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 }
 
 export interface InsuranceEligibilityResult {
@@ -578,20 +682,30 @@ export interface InsuranceEligibilityResult {
   provider: 'mock' | 'live';
 }
 
-export async function checkInsuranceEligibility(body: { patientId?: string; scheme?: string; memberNumber?: string }) {
-  return apiFetch<InsuranceEligibilityResult>('/insurance/eligibility', { method: 'POST', body: JSON.stringify(body) });
+export async function checkInsuranceEligibility(body: {
+  patientId?: string;
+  scheme?: string;
+  memberNumber?: string;
+}) {
+  return apiFetch<InsuranceEligibilityResult>('/insurance/eligibility', {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 }
 
 export async function importLabsCsv(csv: string) {
-  return apiFetch<{ imported: number; errors: { row: number; reason: string }[]; total: number }>('/labs/import', {
-    method: 'POST',
-    body: JSON.stringify({ csv }),
-  });
+  return apiFetch<{ imported: number; errors: { row: number; reason: string }[]; total: number }>(
+    '/labs/import',
+    {
+      method: 'POST',
+      body: JSON.stringify({ csv }),
+    }
+  );
 }
 
 export async function aiChatStream(
   body: { patientId: string; messages: { role: 'user' | 'assistant'; content: string }[] },
-  onDelta: (text: string) => void,
+  onDelta: (text: string) => void
 ): Promise<{ provider: 'openrouter' | 'mock' }> {
   const res = await fetch(`${base}/ai/chat`, {
     method: 'POST',
@@ -617,7 +731,11 @@ export async function aiChatStream(
       const payload = line.slice(6).trim();
       if (!payload) continue;
       try {
-        const evt = JSON.parse(payload) as { type: string; text?: string; provider?: 'openrouter' | 'mock' };
+        const evt = JSON.parse(payload) as {
+          type: string;
+          text?: string;
+          provider?: 'openrouter' | 'mock';
+        };
         if (evt.type === 'delta' && evt.text) onDelta(evt.text);
         if (evt.type === 'done' && evt.provider) provider = evt.provider;
       } catch {

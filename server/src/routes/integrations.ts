@@ -1,15 +1,16 @@
-import { Router } from 'express';
 import { eq } from 'drizzle-orm';
+import { Router } from 'express';
 import { getDb, schema } from '../db/index.js';
 import { newId } from '../lib/ids.js';
+import { checkInsuranceEligibility, parseCsv, verifyNationalId } from '../lib/integrations.js';
 import { logger } from '../lib/logger.js';
-import { verifyNationalId, checkInsuranceEligibility, parseCsv } from '../lib/integrations.js';
 
 export const integrationsRouter = Router();
 
 integrationsRouter.post('/registry/verify', async (req, res) => {
   const { patientId, nationalId } = req.body as { patientId?: string; nationalId?: string };
-  if (!patientId && !nationalId) return res.status(400).json({ error: 'patientId_or_nationalId_required' });
+  if (!patientId && !nationalId)
+    return res.status(400).json({ error: 'patientId_or_nationalId_required' });
 
   let idToVerify = nationalId;
   let matchedName: string | undefined;
@@ -33,16 +34,25 @@ integrationsRouter.post('/insurance/eligibility', async (req, res) => {
 
   if (body.patientId) {
     const { db } = await getDb();
-    const [p] = await db.select().from(schema.patients).where(eq(schema.patients.id, body.patientId));
+    const [p] = await db
+      .select()
+      .from(schema.patients)
+      .where(eq(schema.patients.id, body.patientId));
     if (!p) return res.status(404).json({ error: 'patient_not_found' });
     if (!scheme) scheme = (p.insuranceScheme ?? 'NHIF').split(' ')[0];
     if (!memberNumber) memberNumber = p.nationalId;
   }
 
-  if (!scheme || !memberNumber) return res.status(400).json({ error: 'scheme_and_memberNumber_required' });
+  if (!scheme || !memberNumber)
+    return res.status(400).json({ error: 'scheme_and_memberNumber_required' });
 
   const result = await checkInsuranceEligibility({ scheme, memberNumber });
-  logger.info('insurance_eligibility', { patientId: body.patientId, scheme, status: result.status, provider: result.provider });
+  logger.info('insurance_eligibility', {
+    patientId: body.patientId,
+    scheme,
+    status: result.status,
+    provider: result.provider,
+  });
   res.json(result);
 });
 
@@ -67,7 +77,10 @@ integrationsRouter.post('/labs/import', async (req, res) => {
     const value = r.value || r.result;
 
     if (!patientId || !testName || !value) {
-      errors.push({ row: lineNo, reason: 'missing required fields (patient_id, test_name, value)' });
+      errors.push({
+        row: lineNo,
+        reason: 'missing required fields (patient_id, test_name, value)',
+      });
       continue;
     }
 
@@ -78,7 +91,8 @@ integrationsRouter.post('/labs/import', async (req, res) => {
     }
 
     const statusRaw = (r.status || 'normal').toLowerCase();
-    const status = (allowedStatuses.has(statusRaw) ? statusRaw : 'normal') as 'normal' | 'high' | 'low' | 'critical';
+    const status = (allowedStatuses.has(statusRaw) ? statusRaw : 'normal') as
+      'normal' | 'high' | 'low' | 'critical';
     const collectedAt = r.collected_at ? new Date(r.collected_at).getTime() : now;
     if (Number.isNaN(collectedAt)) {
       errors.push({ row: lineNo, reason: `invalid collected_at date: ${r.collected_at}` });

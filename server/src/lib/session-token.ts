@@ -18,21 +18,28 @@ export async function signSessionToken(claims: SessionClaims, secret: string): P
     .sign(enc);
 }
 
-export async function verifySessionToken(token: string, secret: string): Promise<SessionClaims | null> {
+export async function verifySessionToken(
+  token: string,
+  secret: string
+): Promise<SessionClaims | null> {
   try {
     const enc = new TextEncoder().encode(secret);
     const { payload } = await jwtVerify(token, enc, { algorithms: [alg] });
     const sub = payload.sub;
     const role = payload.role;
     const name = payload.name;
-    if (typeof sub !== 'string' || typeof role !== 'string' || typeof name !== 'string') return null;
+    if (typeof sub !== 'string' || typeof role !== 'string' || typeof name !== 'string')
+      return null;
     return { userId: sub, role, name };
   } catch {
     return null;
   }
 }
 
-export function readCookieHeader(cookieHeader: string | undefined, name: string): string | undefined {
+export function readCookieHeader(
+  cookieHeader: string | undefined,
+  name: string
+): string | undefined {
   if (!cookieHeader) return undefined;
   for (const part of cookieHeader.split(';')) {
     const idx = part.indexOf('=');

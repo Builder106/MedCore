@@ -1,13 +1,18 @@
 import { env } from './env.js';
 
 export interface SmsAdapter {
-  send(opts: { to: string; body: string }): Promise<{ ok: boolean; messageId?: string; provider: string }>;
+  send(opts: {
+    to: string;
+    body: string;
+  }): Promise<{ ok: boolean; messageId?: string; provider: string }>;
   isLive(): boolean;
 }
 
 class MockSmsAdapter implements SmsAdapter {
   private log: { to: string; body: string; at: number }[] = [];
-  isLive() { return false; }
+  isLive() {
+    return false;
+  }
   async send(opts: { to: string; body: string }) {
     const entry = { ...opts, at: Date.now() };
     this.log.push(entry);
@@ -15,11 +20,15 @@ class MockSmsAdapter implements SmsAdapter {
     console.log(`[sms:mock] -> ${opts.to}: ${opts.body}`);
     return { ok: true, messageId: `mock-${entry.at}`, provider: 'mock' };
   }
-  recent() { return [...this.log].reverse(); }
+  recent() {
+    return [...this.log].reverse();
+  }
 }
 
 class AfricasTalkingAdapter implements SmsAdapter {
-  isLive() { return Boolean(env.AT_API_KEY); }
+  isLive() {
+    return Boolean(env.AT_API_KEY);
+  }
   async send(opts: { to: string; body: string }) {
     if (!env.AT_API_KEY) return mockAdapter.send(opts);
     try {
@@ -38,7 +47,9 @@ class AfricasTalkingAdapter implements SmsAdapter {
         },
         body: params.toString(),
       });
-      const data = (await res.json().catch(() => null)) as { SMSMessageData?: { Recipients?: Array<{ messageId: string }> } } | null;
+      const data = (await res.json().catch(() => null)) as {
+        SMSMessageData?: { Recipients?: Array<{ messageId: string }> };
+      } | null;
       const id = data?.SMSMessageData?.Recipients?.[0]?.messageId;
       return { ok: res.ok, messageId: id, provider: 'africastalking' };
     } catch (err) {

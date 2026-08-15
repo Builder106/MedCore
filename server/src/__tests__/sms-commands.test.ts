@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { parseSmsCommand, clampSms, safeName } from '../lib/sms-commands.js';
+import { describe, expect, it } from 'vitest';
 import { lookupFallback } from '../lib/interactions.js';
+import { clampSms, parseSmsCommand, safeName } from '../lib/sms-commands.js';
 
 describe('SMS command parser', () => {
   it('parses PATIENT command', () => {

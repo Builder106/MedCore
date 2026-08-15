@@ -1,6 +1,6 @@
+import { desc, eq } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { desc, eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 import { newId } from '../lib/ids.js';
 
@@ -10,7 +10,9 @@ export const encountersRouter = Router();
 encountersRouter.get('/encounters', async (req, res) => {
   const limit = Math.min(Number(req.query.limit) || 10, 50);
   const { db } = await getDb();
-  const rows = await db.select().from(schema.encounters)
+  const rows = await db
+    .select()
+    .from(schema.encounters)
     .orderBy(desc(schema.encounters.encounterDate))
     .limit(limit);
   res.json({ encounters: rows });
@@ -44,10 +46,13 @@ encountersRouter.post('/encounters', async (req, res) => {
   }
   const { db } = await getDb();
   const id = newId('ENC');
-  await db.insert(schema.encounters).values({
-    id,
-    ...parsed.data,
-    createdAt: Date.now(),
-  }).run();
+  await db
+    .insert(schema.encounters)
+    .values({
+      id,
+      ...parsed.data,
+      createdAt: Date.now(),
+    })
+    .run();
   res.status(201).json({ id });
 });

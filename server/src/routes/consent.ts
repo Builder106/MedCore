@@ -1,6 +1,6 @@
+import { desc, eq } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { and, desc, eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 import { newId } from '../lib/ids.js';
 
@@ -15,7 +15,11 @@ consentRouter.get('/consent', async (req, res) => {
     : parsed.grantedTo
       ? eq(schema.consentGrants.grantedTo, parsed.grantedTo)
       : undefined;
-  const rows = await db.select().from(schema.consentGrants).where(where).orderBy(desc(schema.consentGrants.grantedAt));
+  const rows = await db
+    .select()
+    .from(schema.consentGrants)
+    .where(where)
+    .orderBy(desc(schema.consentGrants.grantedAt));
   res.json({ grants: rows.map(g => ({ ...g, sections: safeJsonArray(g.sections) })) });
 });
 
@@ -44,16 +48,19 @@ consentRouter.post('/consent', async (req, res) => {
   }
   const { db } = await getDb();
   const id = newId('CNT');
-  await db.insert(schema.consentGrants).values({
-    id,
-    patientId: parsed.data.patientId,
-    grantedTo: parsed.data.grantedTo,
-    grantedToType: parsed.data.grantedToType,
-    sections: JSON.stringify(parsed.data.sections),
-    expiresAt: parsed.data.expiresAt,
-    status: 'active',
-    grantedAt: Date.now(),
-  }).run();
+  await db
+    .insert(schema.consentGrants)
+    .values({
+      id,
+      patientId: parsed.data.patientId,
+      grantedTo: parsed.data.grantedTo,
+      grantedToType: parsed.data.grantedToType,
+      sections: JSON.stringify(parsed.data.sections),
+      expiresAt: parsed.data.expiresAt,
+      status: 'active',
+      grantedAt: Date.now(),
+    })
+    .run();
   res.status(201).json({ id });
 });
 

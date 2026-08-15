@@ -1,8 +1,29 @@
-import { NavLink } from 'react-router';
-import type { ComponentType } from 'react';
 import { clsx } from 'clsx';
-import { Activity, Barcode, Bell, CalendarCheck2, FileText, HeartPulse, Hexagon, KeyRound, LogOut, MessageSquare, Mic, Pill, Shield, Sparkles, Stethoscope, Syringe, TestTube2, UserCog, Users, Video } from 'lucide-react';
+import {
+  Activity,
+  Barcode,
+  Bell,
+  CalendarCheck2,
+  FileText,
+  HeartPulse,
+  Hexagon,
+  KeyRound,
+  LogOut,
+  MessageSquare,
+  Mic,
+  Pill,
+  Shield,
+  Sparkles,
+  Stethoscope,
+  Syringe,
+  TestTube2,
+  UserCog,
+  Users,
+  Video,
+} from 'lucide-react';
+import type { ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
+import { NavLink } from 'react-router';
 import { useApp } from '../context/AppContext';
 
 function SidePattern() {
@@ -11,8 +32,17 @@ function SidePattern() {
       <svg width="100%" height="100%">
         <defs>
           <pattern id="medcore-side-grid" width="56" height="56" patternUnits="userSpaceOnUse">
-            <path d="M0 28 L28 0 L56 28 L28 56 Z" fill="none" stroke="rgba(195,154,61,0.24)" strokeWidth="1.2" />
-            <path d="M0 12 H56 M0 44 H56 M12 0 V56 M44 0 V56" stroke="rgba(247,241,230,0.06)" strokeWidth="1" />
+            <path
+              d="M0 28 L28 0 L56 28 L28 56 Z"
+              fill="none"
+              stroke="rgba(195,154,61,0.24)"
+              strokeWidth="1.2"
+            />
+            <path
+              d="M0 12 H56 M0 44 H56 M12 0 V56 M44 0 V56"
+              stroke="rgba(247,241,230,0.06)"
+              strokeWidth="1"
+            />
           </pattern>
         </defs>
         <rect width="100%" height="100%" fill="url(#medcore-side-grid)" />
@@ -68,7 +98,12 @@ export const adminItems: NavItem[] = [
 export function Sidebar() {
   const { role } = useApp();
   const { t } = useTranslation();
-  const roleTitle = role === 'doctor' ? t('sidebar.doctorWorkspace') : role === 'patient' ? t('sidebar.patientPortal') : t('sidebar.facilityAdmin');
+  const roleTitle =
+    role === 'doctor'
+      ? t('sidebar.doctorWorkspace')
+      : role === 'patient'
+        ? t('sidebar.patientPortal')
+        : t('sidebar.facilityAdmin');
   const navItems = role === 'doctor' ? doctorItems : role === 'patient' ? patientItems : adminItems;
 
   return (
@@ -81,7 +116,9 @@ export function Sidebar() {
           </div>
           <div>
             <h1 className="text-[28px] leading-none tracking-tight text-[#F7F1E6]">MedCore</h1>
-            <p className="text-[11px] mt-1 uppercase tracking-[0.2em] text-[#DAB776]">{roleTitle}</p>
+            <p className="text-[11px] mt-1 uppercase tracking-[0.2em] text-[#DAB776]">
+              {roleTitle}
+            </p>
           </div>
         </div>
       </div>
@@ -102,13 +139,18 @@ export function Sidebar() {
                   'af-elevate af-press af-focus w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all text-[14px]',
                   isActive
                     ? 'bg-[#C39A3D]/18 text-[#F7F1E6] border border-[#C39A3D]/55 shadow-[0_10px_20px_-16px_rgba(195,154,61,0.9)]'
-                    : 'text-[#F7F1E6]/78 hover:bg-[#F7F1E6]/8 hover:text-[#F7F1E6]',
+                    : 'text-[#F7F1E6]/78 hover:bg-[#F7F1E6]/8 hover:text-[#F7F1E6]'
                 )
               }
             >
               {({ isActive }) => (
                 <>
-                  <item.icon className={clsx('w-4.5 h-4.5', isActive ? 'text-[#DAB776]' : 'text-[#F7F1E6]/75')} />
+                  <item.icon
+                    className={clsx(
+                      'w-4.5 h-4.5',
+                      isActive ? 'text-[#DAB776]' : 'text-[#F7F1E6]/75'
+                    )}
+                  />
                   <span>{t(item.labelKey)}</span>
                 </>
               )}

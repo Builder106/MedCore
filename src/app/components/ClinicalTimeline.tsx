@@ -1,6 +1,5 @@
-import React from 'react';
-import { CalendarHeart, Syringe, FileText, Pill, ShieldCheck, AlertCircle } from 'lucide-react';
 import { clsx } from 'clsx';
+import { AlertCircle, CalendarHeart, Pill, ShieldCheck, Syringe } from 'lucide-react';
 
 const events = [
   {
@@ -12,7 +11,8 @@ const events = [
     status: 'completed',
     icon: CalendarHeart,
     color: 'bg-teal-100 text-teal-700 ring-teal-50',
-    description: 'Routine checkup. BP slightly elevated at 140/90. Prescribed rest and low-sodium diet.'
+    description:
+      'Routine checkup. BP slightly elevated at 140/90. Prescribed rest and low-sodium diet.',
   },
   {
     id: 2,
@@ -23,7 +23,7 @@ const events = [
     status: 'flagged',
     icon: Syringe,
     color: 'bg-rose-100 text-rose-700 ring-rose-50',
-    description: 'HbA1c levels indicated pre-diabetes range (6.2%). Requires follow-up.'
+    description: 'HbA1c levels indicated pre-diabetes range (6.2%). Requires follow-up.',
   },
   {
     id: 3,
@@ -34,18 +34,21 @@ const events = [
     status: 'pending',
     icon: Pill,
     color: 'bg-indigo-100 text-indigo-700 ring-indigo-50',
-    description: 'Lisinopril 10mg QD requested via USSD portal.'
-  }
+    description: 'Lisinopril 10mg QD requested via USSD portal.',
+  },
 ];
 
 export function ClinicalTimeline() {
   return (
     <div className="bg-white rounded-3xl p-6 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.06)] border border-[#EAE6DF]/60 flex-1">
-      
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 tracking-tight">Recent Clinical Activity</h2>
-          <p className="text-sm font-medium text-slate-500 mt-1">Timeline of encounters across your facility.</p>
+          <h2 className="text-xl font-bold text-slate-900 tracking-tight">
+            Recent Clinical Activity
+          </h2>
+          <p className="text-sm font-medium text-slate-500 mt-1">
+            Timeline of encounters across your facility.
+          </p>
         </div>
         <button className="text-sm font-bold text-teal-600 bg-teal-50 hover:bg-teal-100 px-4 py-2 rounded-xl transition-colors hidden sm:block">
           Filter Timeline
@@ -53,15 +56,15 @@ export function ClinicalTimeline() {
       </div>
 
       <div className="relative pl-3 space-y-8 before:absolute before:inset-y-2 before:left-7 before:w-px before:bg-[#EAE6DF] z-0">
-        
-        {events.map((event) => (
+        {events.map(event => (
           <div key={event.id} className="relative flex items-start gap-6 group">
-            
             {/* Timeline Node */}
-            <div className={clsx(
-              "relative z-10 w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ring-4 transition-transform group-hover:scale-110", 
-              event.color
-            )}>
+            <div
+              className={clsx(
+                'relative z-10 w-9 h-9 rounded-xl flex items-center justify-center shadow-sm ring-4 transition-transform group-hover:scale-110',
+                event.color
+              )}
+            >
               <event.icon size={16} className="fill-current/20" />
             </div>
 
@@ -76,19 +79,23 @@ export function ClinicalTimeline() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-slate-400">{event.date}</span>
-                  {event.status === 'completed' && <ShieldCheck size={16} className="text-emerald-500" />}
-                  {event.status === 'flagged' && <AlertCircle size={16} className="text-rose-500" />}
-                  {event.status === 'pending' && <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />}
+                  {event.status === 'completed' && (
+                    <ShieldCheck size={16} className="text-emerald-500" />
+                  )}
+                  {event.status === 'flagged' && (
+                    <AlertCircle size={16} className="text-rose-500" />
+                  )}
+                  {event.status === 'pending' && (
+                    <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
+                  )}
                 </div>
               </div>
               <p className="text-sm font-medium text-slate-600 leading-relaxed max-w-2xl">
                 {event.description}
               </p>
             </div>
-
           </div>
         ))}
-
       </div>
     </div>
   );

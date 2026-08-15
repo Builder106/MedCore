@@ -1,9 +1,9 @@
+import { desc, eq } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { eq, desc } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
-import { resolveInteraction } from '../lib/interactions.js';
 import { newId } from '../lib/ids.js';
+import { resolveInteraction } from '../lib/interactions.js';
 import { verifyPin } from '../lib/pin.js';
 
 export const interactionsRouter = Router();
@@ -44,26 +44,32 @@ interactionsRouter.post('/interactions/events', async (req, res) => {
       res.status(400).json({ error: 'PIN required to override interaction' });
       return;
     }
-    const [doctor] = await db.select().from(schema.users).where(eq(schema.users.id, parsed.data.doctorId));
+    const [doctor] = await db
+      .select()
+      .from(schema.users)
+      .where(eq(schema.users.id, parsed.data.doctorId));
     if (!doctor || doctor.role !== 'doctor' || !verifyPin(parsed.data.pin, doctor.pinHash)) {
       res.status(403).json({ error: 'Invalid PIN for override' });
       return;
     }
   }
   const id = newId('IXE');
-  await db.insert(schema.interactionEvents).values({
-    id,
-    patientId: parsed.data.patientId,
-    doctorId: parsed.data.doctorId,
-    drugA: parsed.data.drugA,
-    drugB: parsed.data.drugB,
-    level: parsed.data.level,
-    message: parsed.data.message,
-    source: parsed.data.source,
-    overridden: parsed.data.overridden ? 1 : 0,
-    overrideReason: parsed.data.overrideReason,
-    createdAt: Date.now(),
-  }).run();
+  await db
+    .insert(schema.interactionEvents)
+    .values({
+      id,
+      patientId: parsed.data.patientId,
+      doctorId: parsed.data.doctorId,
+      drugA: parsed.data.drugA,
+      drugB: parsed.data.drugB,
+      level: parsed.data.level,
+      message: parsed.data.message,
+      source: parsed.data.source,
+      overridden: parsed.data.overridden ? 1 : 0,
+      overrideReason: parsed.data.overrideReason,
+      createdAt: Date.now(),
+    })
+    .run();
   res.status(201).json({ id });
 });
 

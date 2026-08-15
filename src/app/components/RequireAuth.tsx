@@ -1,5 +1,5 @@
-import { Navigate, Outlet, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
+import { Navigate, Outlet, useLocation } from 'react-router';
 import { useApp } from '../context/AppContext';
 
 export function RequireAuth() {

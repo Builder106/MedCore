@@ -1,6 +1,6 @@
+import { and, desc, eq, gte } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { and, desc, eq, gte } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 import { newId } from '../lib/ids.js';
 
@@ -54,18 +54,21 @@ appointmentsRouter.post('/appointments', async (req, res) => {
   }
   const { db } = await getDb();
   const id = newId('APT');
-  await db.insert(schema.appointments).values({
-    id,
-    patientId: parsed.data.patientId,
-    doctorId: parsed.data.doctorId,
-    facilityId: parsed.data.facilityId,
-    scheduledFor: parsed.data.scheduledFor,
-    durationMin: parsed.data.durationMin ?? 20,
-    reason: parsed.data.reason,
-    notes: parsed.data.notes,
-    status: 'scheduled',
-    createdAt: Date.now(),
-  }).run();
+  await db
+    .insert(schema.appointments)
+    .values({
+      id,
+      patientId: parsed.data.patientId,
+      doctorId: parsed.data.doctorId,
+      facilityId: parsed.data.facilityId,
+      scheduledFor: parsed.data.scheduledFor,
+      durationMin: parsed.data.durationMin ?? 20,
+      reason: parsed.data.reason,
+      notes: parsed.data.notes,
+      status: 'scheduled',
+      createdAt: Date.now(),
+    })
+    .run();
   res.status(201).json({ id });
 });
 
@@ -82,6 +85,10 @@ appointmentsRouter.patch('/appointments/:id', async (req, res) => {
     return;
   }
   const { db } = await getDb();
-  await db.update(schema.appointments).set(parsed.data).where(eq(schema.appointments.id, req.params.id)).run();
+  await db
+    .update(schema.appointments)
+    .set(parsed.data)
+    .where(eq(schema.appointments.id, req.params.id))
+    .run();
   res.json({ ok: true });
 });

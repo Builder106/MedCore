@@ -1,12 +1,12 @@
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { UserRole } from '../context/AppContext';
 import { AppProvider } from '../context/AppContext';
-import { MobileDrawer } from './MobileDrawer';
 import { BottomNav } from './BottomNav';
 import { Layout } from './Layout';
-import type { UserRole } from '../context/AppContext';
+import { MobileDrawer } from './MobileDrawer';
 
 let mockRole: UserRole = 'patient';
 
@@ -18,22 +18,26 @@ beforeEach(() => {
       if (url.includes('/api/auth/me')) {
         const id =
           mockRole === 'patient' ? 'PAT-001' : mockRole === 'admin' ? 'ADM-001' : 'DOC-001';
-        return new Response(
-          JSON.stringify({ user: { id, name: 'Test User', role: mockRole } }),
-          { status: 200, headers: { 'Content-Type': 'application/json' } },
-        );
+        return new Response(JSON.stringify({ user: { id, name: 'Test User', role: mockRole } }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
       }
       return new Response('{}', { status: 404 });
-    }),
+    })
   );
 });
 
-function renderWithShell(ui: React.ReactNode, initialRole: UserRole = 'patient', initialEntries = ['/']) {
+function renderWithShell(
+  ui: React.ReactNode,
+  initialRole: UserRole = 'patient',
+  initialEntries = ['/']
+) {
   mockRole = initialRole;
   return render(
     <MemoryRouter initialEntries={initialEntries}>
       <AppProvider>{ui}</AppProvider>
-    </MemoryRouter>,
+    </MemoryRouter>
   );
 }
 
@@ -92,7 +96,14 @@ describe('BottomNav', () => {
 
   it('invokes onOpenMore when the More tab is tapped', async () => {
     let opened = 0;
-    renderWithShell(<BottomNav onOpenMore={() => { opened += 1; }} />, 'patient');
+    renderWithShell(
+      <BottomNav
+        onOpenMore={() => {
+          opened += 1;
+        }}
+      />,
+      'patient'
+    );
     await screen.findByRole('navigation', { name: /primary/i });
     const more = await screen.findByRole('button', { name: /more/i });
     fireEvent.click(more);
@@ -121,7 +132,15 @@ describe('MobileDrawer', () => {
 
   it('closes when a nav link inside is clicked', async () => {
     let closed = 0;
-    renderWithShell(<MobileDrawer open={true} onClose={() => { closed += 1; }} />, 'patient');
+    renderWithShell(
+      <MobileDrawer
+        open={true}
+        onClose={() => {
+          closed += 1;
+        }}
+      />,
+      'patient'
+    );
     const dialog = await screen.findByRole('dialog', { name: /navigation/i });
     const firstLink = within(dialog).getAllByRole('link')[0];
     fireEvent.click(firstLink);
@@ -139,11 +158,11 @@ describe('Layout mobile header', () => {
         if (url.includes('/api/auth/me')) {
           return new Response(
             JSON.stringify({ user: { id: 'DOC-001', name: 'Test', role: 'doctor' } }),
-            { status: 200, headers: { 'Content-Type': 'application/json' } },
+            { status: 200, headers: { 'Content-Type': 'application/json' } }
           );
         }
         return new Response('{}', { status: 404 });
-      }),
+      })
     );
   }
 
@@ -154,7 +173,7 @@ describe('Layout mobile header', () => {
         <AppProvider>
           <Layout />
         </AppProvider>
-      </MemoryRouter>,
+      </MemoryRouter>
     );
     expect(await screen.findByRole('button', { name: /open navigation/i })).toBeInTheDocument();
   });
@@ -166,7 +185,7 @@ describe('Layout mobile header', () => {
         <AppProvider>
           <Layout />
         </AppProvider>
-      </MemoryRouter>,
+      </MemoryRouter>
     );
     expect(await screen.findByRole('navigation', { name: /primary/i })).toBeInTheDocument();
   });
@@ -178,7 +197,7 @@ describe('Layout mobile header', () => {
         <AppProvider>
           <Layout />
         </AppProvider>
-      </MemoryRouter>,
+      </MemoryRouter>
     );
     expect(screen.queryByRole('dialog', { name: /navigation/i })).toBeNull();
     fireEvent.click(await screen.findByRole('button', { name: /open navigation/i }));

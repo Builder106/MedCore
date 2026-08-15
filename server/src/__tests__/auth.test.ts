@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import { resetDbCacheForTests } from '../db/index.js';
 
 process.env.DATABASE_URL = ':memory:';
@@ -33,9 +33,7 @@ describe('Auth', () => {
   });
 
   it('POST /api/auth/login rejects wrong PIN', async () => {
-    const res = await request(app)
-      .post('/api/auth/login')
-      .send({ userId: 'DOC-001', pin: '0000' });
+    const res = await request(app).post('/api/auth/login').send({ userId: 'DOC-001', pin: '0000' });
     expect(res.status).toBe(401);
     expect(res.body.error).toBe('invalid_credentials');
   });

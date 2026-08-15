@@ -1,6 +1,6 @@
+import { desc, eq } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { desc, eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 import { newId } from '../lib/ids.js';
 import { requireRole } from '../middleware/rbac.js';
@@ -30,12 +30,15 @@ staffRouter.post('/staff', requireRole('admin'), async (req, res) => {
   }
   const { db } = await getDb();
   const id = newId('STF');
-  await db.insert(schema.staff).values({
-    id,
-    ...parsed.data,
-    status: 'active',
-    createdAt: Date.now(),
-  }).run();
+  await db
+    .insert(schema.staff)
+    .values({
+      id,
+      ...parsed.data,
+      status: 'active',
+      createdAt: Date.now(),
+    })
+    .run();
   res.status(201).json({ id });
 });
 
@@ -54,6 +57,10 @@ staffRouter.patch('/staff/:id', requireRole('admin'), async (req, res) => {
     return;
   }
   const { db } = await getDb();
-  await db.update(schema.staff).set(parsed.data).where(eq(schema.staff.id, String(req.params.id))).run();
+  await db
+    .update(schema.staff)
+    .set(parsed.data)
+    .where(eq(schema.staff.id, String(req.params.id)))
+    .run();
   res.json({ ok: true });
 });

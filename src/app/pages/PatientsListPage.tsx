@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { Plus, QrCode, Search } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router';
-import { patients as mockPatients } from '../data/mock-data';
-import { Search, QrCode, Plus } from 'lucide-react';
 import { ResponsiveTable, type TableColumn } from '../components/ui/responsive-table';
+import { patients as mockPatients } from '../data/mock-data';
 import { listPatients, type Patient } from '../services/api';
 
 export function PatientsListPage() {
@@ -20,53 +20,98 @@ export function PatientsListPage() {
         if (!cancelled) setAllPatients(res.patients);
       } catch {
         if (!cancelled) {
-          setAllPatients(mockPatients.map(p => ({
-            id: p.id, firstName: p.firstName, lastName: p.lastName,
-            dob: p.dob, phone: p.phone, nationalId: p.nationalId,
-            bloodType: p.bloodType, allergies: p.allergies,
-            insuranceScheme: p.insuranceScheme, createdAt: 0,
-          })));
+          setAllPatients(
+            mockPatients.map(p => ({
+              id: p.id,
+              firstName: p.firstName,
+              lastName: p.lastName,
+              dob: p.dob,
+              phone: p.phone,
+              nationalId: p.nationalId,
+              bloodType: p.bloodType,
+              allergies: p.allergies,
+              insuranceScheme: p.insuranceScheme,
+              createdAt: 0,
+            }))
+          );
         }
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filtered = allPatients.filter(p =>
-    `${p.firstName} ${p.lastName} ${p.phone} ${p.nationalId} ${p.id}`.toLowerCase().includes(query.toLowerCase())
+    `${p.firstName} ${p.lastName} ${p.phone} ${p.nationalId} ${p.id}`
+      .toLowerCase()
+      .includes(query.toLowerCase())
   );
 
   const columns: TableColumn<Patient>[] = [
     {
-      key: 'patient', header: 'Patient',
+      key: 'patient',
+      header: 'Patient',
       cell: p => (
-        <Link to={`/patients/${p.id}`} className="af-focus flex items-center gap-3" onClick={e => e.stopPropagation()}>
+        <Link
+          to={`/patients/${p.id}`}
+          className="af-focus flex items-center gap-3"
+          onClick={e => e.stopPropagation()}
+        >
           <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center text-purple-700 text-[13px] shrink-0">
-            {p.firstName[0]}{p.lastName[0]}
+            {p.firstName[0]}
+            {p.lastName[0]}
           </div>
           <div className="min-w-0">
-            <p className="text-[14px] text-purple-600 hover:underline truncate">{p.firstName} {p.lastName}</p>
+            <p className="text-[14px] text-purple-600 hover:underline truncate">
+              {p.firstName} {p.lastName}
+            </p>
             <p className="text-[11px] text-gray-400">DOB: {p.dob}</p>
           </div>
         </Link>
       ),
     },
-    { key: 'id', header: 'ID', cell: p => <span className="text-[13px] text-gray-600">{p.nationalId}</span>, hideOnMobile: true },
-    { key: 'phone', header: 'Phone', cell: p => <span className="text-[13px] text-gray-600">{p.phone}</span> },
     {
-      key: 'ins', header: 'Insurance',
-      cell: p => p.insuranceScheme
-        ? <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded-full text-[12px]">{p.insuranceScheme}</span>
-        : <span className="text-gray-400 text-[12px]">—</span>,
+      key: 'id',
+      header: 'ID',
+      cell: p => <span className="text-[13px] text-gray-600">{p.nationalId}</span>,
       hideOnMobile: true,
     },
     {
-      key: 'allergies', header: 'Allergies',
-      cell: p => p.allergies.length
-        ? <div className="flex flex-wrap gap-1">{p.allergies.map(a => <span key={a} className="bg-red-50 text-red-600 px-2 py-0.5 rounded-full text-[12px]">{a}</span>)}</div>
-        : <span className="text-gray-400 text-[12px]">None</span>,
+      key: 'phone',
+      header: 'Phone',
+      cell: p => <span className="text-[13px] text-gray-600">{p.phone}</span>,
+    },
+    {
+      key: 'ins',
+      header: 'Insurance',
+      cell: p =>
+        p.insuranceScheme ? (
+          <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded-full text-[12px]">
+            {p.insuranceScheme}
+          </span>
+        ) : (
+          <span className="text-gray-400 text-[12px]">—</span>
+        ),
+      hideOnMobile: true,
+    },
+    {
+      key: 'allergies',
+      header: 'Allergies',
+      cell: p =>
+        p.allergies.length ? (
+          <div className="flex flex-wrap gap-1">
+            {p.allergies.map(a => (
+              <span key={a} className="bg-red-50 text-red-600 px-2 py-0.5 rounded-full text-[12px]">
+                {a}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <span className="text-gray-400 text-[12px]">None</span>
+        ),
     },
   ];
 

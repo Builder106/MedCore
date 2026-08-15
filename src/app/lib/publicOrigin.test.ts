@@ -1,9 +1,15 @@
-import { describe, it, expect } from 'vitest';
-import { normalizePublicOrigin, resolvePublicOrigin, isLikelyUnreachableForQrScan } from './publicOrigin';
+import { describe, expect, it } from 'vitest';
+import {
+  isLikelyUnreachableForQrScan,
+  normalizePublicOrigin,
+  resolvePublicOrigin,
+} from './publicOrigin';
 
 describe('resolvePublicOrigin', () => {
   it('uses env when valid https URL', () => {
-    expect(resolvePublicOrigin('https://x.trycloudflare.com', 'http://localhost:5173')).toBe('https://x.trycloudflare.com');
+    expect(resolvePublicOrigin('https://x.trycloudflare.com', 'http://localhost:5173')).toBe(
+      'https://x.trycloudflare.com'
+    );
   });
 
   it('falls back when env empty', () => {

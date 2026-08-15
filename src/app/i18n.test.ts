@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest';
+import { beforeAll, describe, expect, it } from 'vitest';
 import i18n, { SUPPORTED_LANGUAGES } from './i18n';
 
 beforeAll(async () => {

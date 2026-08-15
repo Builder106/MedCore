@@ -1,5 +1,5 @@
-import { Router } from 'express';
 import { and, count, desc, gte, sql } from 'drizzle-orm';
+import { Router } from 'express';
 import { getDb, schema } from '../db/index.js';
 
 export const statsRouter = Router();
@@ -26,10 +26,9 @@ statsRouter.get('/stats/daily', async (req, res) => {
   const [emergency] = await db
     .select({ n: count() })
     .from(schema.encounters)
-    .where(and(
-      gte(schema.encounters.createdAt, dayMs),
-      sql`${schema.encounters.type} = 'emergency'`,
-    ));
+    .where(
+      and(gte(schema.encounters.createdAt, dayMs), sql`${schema.encounters.type} = 'emergency'`)
+    );
 
   // Distinct patients seen today via appointments
   const patientsToday = await db

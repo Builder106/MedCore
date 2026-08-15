@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 interface Bucket {
   count: number;
@@ -22,7 +22,9 @@ export function rateLimit(opts: LimiterOptions) {
     }
     const key = opts.keyGenerator
       ? opts.keyGenerator(req)
-      : (req.headers['x-forwarded-for'] as string | undefined) ?? req.socket.remoteAddress ?? 'unknown';
+      : ((req.headers['x-forwarded-for'] as string | undefined) ??
+        req.socket.remoteAddress ??
+        'unknown');
     const now = Date.now();
     let bucket = buckets.get(key);
     if (!bucket || bucket.resetAt < now) {

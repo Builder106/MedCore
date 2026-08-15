@@ -1,11 +1,11 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
-  toFhirPatient,
+  toFhirBundle,
+  toFhirEncounter,
+  toFhirImmunization,
   toFhirMedicationRequest,
   toFhirObservation,
-  toFhirImmunization,
-  toFhirEncounter,
-  toFhirBundle,
+  toFhirPatient,
 } from '../lib/fhir-mappers.js';
 
 const BASE_PATIENT = {
@@ -81,7 +81,7 @@ describe('toFhirPatient', () => {
 
   it('includes both patient-id and national-id identifiers', () => {
     const r = toFhirPatient(BASE_PATIENT);
-    const systems = r.identifier.map((i) => i.system);
+    const systems = r.identifier.map(i => i.system);
     expect(systems).toContain('urn:medcore:patient-id');
     expect(systems).toContain('urn:medcore:national-id');
   });

@@ -6,7 +6,11 @@ let configured = false;
 export function configurePush() {
   if (configured) return;
   if (env.WEB_PUSH_PUBLIC_KEY && env.WEB_PUSH_PRIVATE_KEY) {
-    webpush.setVapidDetails(env.WEB_PUSH_CONTACT, env.WEB_PUSH_PUBLIC_KEY, env.WEB_PUSH_PRIVATE_KEY);
+    webpush.setVapidDetails(
+      env.WEB_PUSH_CONTACT,
+      env.WEB_PUSH_PUBLIC_KEY,
+      env.WEB_PUSH_PRIVATE_KEY
+    );
     configured = true;
   }
 }
@@ -15,7 +19,10 @@ export function pushAvailable() {
   return Boolean(env.WEB_PUSH_PUBLIC_KEY && env.WEB_PUSH_PRIVATE_KEY);
 }
 
-export async function sendPush(subscription: { endpoint: string; keys: { p256dh: string; auth: string } }, payload: object) {
+export async function sendPush(
+  subscription: { endpoint: string; keys: { p256dh: string; auth: string } },
+  payload: object
+) {
   configurePush();
   if (!pushAvailable()) {
     console.log('[push:mock] would send to', subscription.endpoint, payload);

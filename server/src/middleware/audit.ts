@@ -1,4 +1,4 @@
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { getDb, schema } from '../db/index.js';
 import { newId } from '../lib/ids.js';
 import { isPublicApiPath } from './session.js';
@@ -42,19 +42,25 @@ export function auditMiddleware(req: Request, res: Response, next: NextFunction)
     void (async () => {
       try {
         const { db } = await getDb();
-        await db.insert(schema.auditLog).values({
-          id: newId('AUD'),
-          userId: req.auth?.userId ?? null,
-          role: req.auth?.role ?? null,
-          patientId: patientIdFromBody,
-          action: deriveAction(req.method, req.path),
-          path: req.path,
-          method: req.method,
-          status: res.statusCode,
-          durationMs: Date.now() - started,
-          ip: (req.headers['x-forwarded-for'] as string | undefined) ?? req.socket.remoteAddress ?? null,
-          createdAt: Date.now(),
-        }).run();
+        await db
+          .insert(schema.auditLog)
+          .values({
+            id: newId('AUD'),
+            userId: req.auth?.userId ?? null,
+            role: req.auth?.role ?? null,
+            patientId: patientIdFromBody,
+            action: deriveAction(req.method, req.path),
+            path: req.path,
+            method: req.method,
+            status: res.statusCode,
+            durationMs: Date.now() - started,
+            ip:
+              (req.headers['x-forwarded-for'] as string | undefined) ??
+              req.socket.remoteAddress ??
+              null,
+            createdAt: Date.now(),
+          })
+          .run();
       } catch (err) {
         console.error('[audit] failed to record entry', err);
       }

@@ -1,6 +1,6 @@
 import { createClient, type Client } from '@libsql/client';
 import { drizzle, type LibSQLDatabase } from 'drizzle-orm/libsql';
-import { readFileSync, mkdirSync } from 'node:fs';
+import { mkdirSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import * as schema from './schema.js';
@@ -33,7 +33,10 @@ export async function getDb(databaseUrl?: string) {
   }
 
   const migrationSql = readFileSync(resolve(here, 'migrations.sql'), 'utf8');
-  const statements = migrationSql.split(';').map(s => s.trim()).filter(Boolean);
+  const statements = migrationSql
+    .split(';')
+    .map(s => s.trim())
+    .filter(Boolean);
   for (const stmt of statements) {
     await raw.execute(stmt);
   }

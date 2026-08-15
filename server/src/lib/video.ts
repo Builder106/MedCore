@@ -12,7 +12,10 @@ export function jitsiRoomNameForPatient(patientId: string): string {
   return `medcore${slug}`.slice(0, 200) || 'medcoredemo';
 }
 
-export async function createVideoRoom(opts: { patientId: string; dailyRoomName: string }): Promise<VideoRoom> {
+export async function createVideoRoom(opts: {
+  patientId: string;
+  dailyRoomName: string;
+}): Promise<VideoRoom> {
   const expiresAt = Date.now() + 1000 * 60 * 60;
   const jitsiName = jitsiRoomNameForPatient(opts.patientId);
   if (!env.DAILY_API_KEY) {
@@ -32,7 +35,11 @@ export async function createVideoRoom(opts: { patientId: string; dailyRoomName: 
       },
       body: JSON.stringify({
         name: opts.dailyRoomName,
-        properties: { exp: Math.floor(expiresAt / 1000), enable_screenshare: true, enable_chat: false },
+        properties: {
+          exp: Math.floor(expiresAt / 1000),
+          enable_screenshare: true,
+          enable_chat: false,
+        },
       }),
     });
     const data = (await res.json()) as { url?: string; name?: string; error?: string };

@@ -18,12 +18,43 @@ interface FallbackEntry {
 }
 
 export const FALLBACK_INTERACTIONS: FallbackEntry[] = [
-  { a: 'metformin', b: 'ibuprofen', level: 'warning', message: 'May reduce kidney function. Monitor creatinine levels.' },
-  { a: 'metformin', b: 'alcohol', level: 'warning', message: 'Risk of lactic acidosis. Advise patient to avoid alcohol.' },
-  { a: 'warfarin', b: 'aspirin', level: 'critical', message: 'Significantly increased bleeding risk. Do not co-prescribe without haematology review.' },
-  { a: 'lisinopril', b: 'potassium', level: 'warning', message: 'Risk of hyperkalaemia. Monitor potassium levels weekly.' },
-  { a: 'amlodipine', b: 'simvastatin', level: 'info', message: 'Minor PK interaction. Limit simvastatin to 20mg/day.' },
-  { a: 'metformin', b: 'contrast', level: 'warning', message: 'Hold metformin 48h before/after iodinated contrast.' },
+  {
+    a: 'metformin',
+    b: 'ibuprofen',
+    level: 'warning',
+    message: 'May reduce kidney function. Monitor creatinine levels.',
+  },
+  {
+    a: 'metformin',
+    b: 'alcohol',
+    level: 'warning',
+    message: 'Risk of lactic acidosis. Advise patient to avoid alcohol.',
+  },
+  {
+    a: 'warfarin',
+    b: 'aspirin',
+    level: 'critical',
+    message:
+      'Significantly increased bleeding risk. Do not co-prescribe without haematology review.',
+  },
+  {
+    a: 'lisinopril',
+    b: 'potassium',
+    level: 'warning',
+    message: 'Risk of hyperkalaemia. Monitor potassium levels weekly.',
+  },
+  {
+    a: 'amlodipine',
+    b: 'simvastatin',
+    level: 'info',
+    message: 'Minor PK interaction. Limit simvastatin to 20mg/day.',
+  },
+  {
+    a: 'metformin',
+    b: 'contrast',
+    level: 'warning',
+    message: 'Hold metformin 48h before/after iodinated contrast.',
+  },
 ];
 
 export function lookupFallback(drugA: string, drugB: string): InteractionResult {
@@ -31,8 +62,7 @@ export function lookupFallback(drugA: string, drugB: string): InteractionResult 
   const b = norm(drugB);
   for (const entry of FALLBACK_INTERACTIONS) {
     const matches =
-      (a.includes(entry.a) && b.includes(entry.b)) ||
-      (a.includes(entry.b) && b.includes(entry.a));
+      (a.includes(entry.a) && b.includes(entry.b)) || (a.includes(entry.b) && b.includes(entry.a));
     if (matches) {
       return {
         level: entry.level,
@@ -46,7 +76,11 @@ export function lookupFallback(drugA: string, drugB: string): InteractionResult 
   return { level: 'none', drugA, drugB, message: '', source: 'none' };
 }
 
-export async function checkInteractionViaOpenFDA(drugA: string, drugB: string, fetchImpl: typeof fetch = fetch): Promise<InteractionResult | null> {
+export async function checkInteractionViaOpenFDA(
+  drugA: string,
+  drugB: string,
+  fetchImpl: typeof fetch = fetch
+): Promise<InteractionResult | null> {
   try {
     const url = `https://api.fda.gov/drug/label.json?search=drug_interactions:%22${encodeURIComponent(drugA)}%22+AND+drug_interactions:%22${encodeURIComponent(drugB)}%22&limit=1`;
     const res = await fetchImpl(url);
@@ -56,7 +90,8 @@ export async function checkInteractionViaOpenFDA(drugA: string, drugB: string, f
     if (!text) return null;
     const lower = text.toLowerCase();
     let level: InteractionLevel = 'info';
-    if (/\b(contraindicated|fatal|life[- ]threatening|severe|do not)\b/.test(lower)) level = 'critical';
+    if (/\b(contraindicated|fatal|life[- ]threatening|severe|do not)\b/.test(lower))
+      level = 'critical';
     else if (/\b(monitor|caution|increase|decrease|avoid|risk)\b/.test(lower)) level = 'warning';
     return {
       level,

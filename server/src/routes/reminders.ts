@@ -1,10 +1,10 @@
+import { and, desc, eq, gte } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { and, desc, eq, gte } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 import { newId } from '../lib/ids.js';
+import { publicVapidKey, sendPush } from '../lib/push.js';
 import { sms } from '../lib/sms.js';
-import { sendPush, publicVapidKey } from '../lib/push.js';
 
 export const remindersRouter = Router();
 
@@ -33,15 +33,18 @@ remindersRouter.post('/reminders', async (req, res) => {
       const scheduled = new Date(d);
       scheduled.setUTCHours(hh, mm, 0, 0);
       const id = newId('REM');
-      await db.insert(schema.medicationReminders).values({
-        id,
-        prescriptionId: parsed.data.prescriptionId,
-        patientId: parsed.data.patientId,
-        scheduledTime: scheduled.getTime(),
-        status: 'pending',
-        channel: parsed.data.channel,
-        createdAt: Date.now(),
-      }).run();
+      await db
+        .insert(schema.medicationReminders)
+        .values({
+          id,
+          prescriptionId: parsed.data.prescriptionId,
+          patientId: parsed.data.patientId,
+          scheduledTime: scheduled.getTime(),
+          status: 'pending',
+          channel: parsed.data.channel,
+          createdAt: Date.now(),
+        })
+        .run();
       created.push(id);
     }
   }
@@ -53,12 +56,22 @@ remindersRouter.get('/patients/:patientId/reminders', async (req, res) => {
   const Q = z.object({ from: z.coerce.number().optional() });
   const parsed = Q.parse(req.query);
   const rows = parsed.from
-    ? await db.select().from(schema.medicationReminders)
-        .where(and(eq(schema.medicationReminders.patientId, req.params.patientId), gte(schema.medicationReminders.scheduledTime, parsed.from)))
+    ? await db
+        .select()
+        .from(schema.medicationReminders)
+        .where(
+          and(
+            eq(schema.medicationReminders.patientId, req.params.patientId),
+            gte(schema.medicationReminders.scheduledTime, parsed.from)
+          )
+        )
         .orderBy(desc(schema.medicationReminders.scheduledTime))
-    : await db.select().from(schema.medicationReminders)
+    : await db
+        .select()
+        .from(schema.medicationReminders)
         .where(eq(schema.medicationReminders.patientId, req.params.patientId))
-        .orderBy(desc(schema.medicationReminders.scheduledTime)).limit(100);
+        .orderBy(desc(schema.medicationReminders.scheduledTime))
+        .limit(100);
   res.json({ reminders: rows });
 });
 
@@ -70,26 +83,41 @@ remindersRouter.post('/reminders/:id/respond', async (req, res) => {
     return;
   }
   const { db } = await getDb();
-  const [reminder] = await db.select().from(schema.medicationReminders).where(eq(schema.medicationReminders.id, req.params.id));
-  if (!reminder) { res.status(404).json({ error: 'not_found' }); return; }
+  const [reminder] = await db
+    .select()
+    .from(schema.medicationReminders)
+    .where(eq(schema.medicationReminders.id, req.params.id));
+  if (!reminder) {
+    res.status(404).json({ error: 'not_found' });
+    return;
+  }
   const status = parsed.data.response === 'TAKEN' ? 'confirmed' : 'skipped';
-  await db.update(schema.medicationReminders).set({ status, response: parsed.data.response, respondedAt: Date.now() }).where(eq(schema.medicationReminders.id, req.params.id)).run();
+  await db
+    .update(schema.medicationReminders)
+    .set({ status, response: parsed.data.response, respondedAt: Date.now() })
+    .where(eq(schema.medicationReminders.id, req.params.id))
+    .run();
   const adhStatus = parsed.data.response === 'TAKEN' ? 'taken' : 'skipped';
   const doseDate = new Date(reminder.scheduledTime).toISOString().slice(0, 10);
-  await db.insert(schema.adherenceEvents).values({
-    id: newId('ADH'),
-    prescriptionId: reminder.prescriptionId,
-    patientId: reminder.patientId,
-    doseDate,
-    status: adhStatus,
-    recordedAt: Date.now(),
-  }).run();
+  await db
+    .insert(schema.adherenceEvents)
+    .values({
+      id: newId('ADH'),
+      prescriptionId: reminder.prescriptionId,
+      patientId: reminder.patientId,
+      doseDate,
+      status: adhStatus,
+      recordedAt: Date.now(),
+    })
+    .run();
   res.json({ ok: true, status });
 });
 
 remindersRouter.get('/patients/:patientId/adherence', async (req, res) => {
   const { db } = await getDb();
-  const events = await db.select().from(schema.adherenceEvents)
+  const events = await db
+    .select()
+    .from(schema.adherenceEvents)
     .where(eq(schema.adherenceEvents.patientId, req.params.patientId))
     .orderBy(desc(schema.adherenceEvents.doseDate));
   const last30 = events.filter(e => {
@@ -118,36 +146,67 @@ remindersRouter.post('/push/subscribe', async (req, res) => {
     keys: z.object({ p256dh: z.string(), auth: z.string() }),
   });
   const parsed = Body.safeParse(req.body);
-  if (!parsed.success) { res.status(400).json({ error: parsed.error.flatten() }); return; }
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
   const { db } = await getDb();
-  await db.insert(schema.pushSubscriptions).values({
-    id: newId('SUB'),
-    userId: parsed.data.userId,
-    endpoint: parsed.data.endpoint,
-    p256dh: parsed.data.keys.p256dh,
-    auth: parsed.data.keys.auth,
-    createdAt: Date.now(),
-  }).run();
+  await db
+    .insert(schema.pushSubscriptions)
+    .values({
+      id: newId('SUB'),
+      userId: parsed.data.userId,
+      endpoint: parsed.data.endpoint,
+      p256dh: parsed.data.keys.p256dh,
+      auth: parsed.data.keys.auth,
+      createdAt: Date.now(),
+    })
+    .run();
   res.status(201).json({ ok: true });
 });
 
 remindersRouter.post('/reminders/dispatch-now', async (req, res) => {
   const Body = z.object({ patientId: z.string() });
   const parsed = Body.safeParse(req.body);
-  if (!parsed.success) { res.status(400).json({ error: parsed.error.flatten() }); return; }
+  if (!parsed.success) {
+    res.status(400).json({ error: parsed.error.flatten() });
+    return;
+  }
   const { db } = await getDb();
-  const [patient] = await db.select().from(schema.patients).where(eq(schema.patients.id, parsed.data.patientId));
-  if (!patient) { res.status(404).json({ error: 'not_found' }); return; }
-  const meds = await db.select().from(schema.prescriptions)
-    .where(and(eq(schema.prescriptions.patientId, parsed.data.patientId), eq(schema.prescriptions.status, 'active')));
-  if (meds.length === 0) { res.json({ ok: true, sent: 0 }); return; }
+  const [patient] = await db
+    .select()
+    .from(schema.patients)
+    .where(eq(schema.patients.id, parsed.data.patientId));
+  if (!patient) {
+    res.status(404).json({ error: 'not_found' });
+    return;
+  }
+  const meds = await db
+    .select()
+    .from(schema.prescriptions)
+    .where(
+      and(
+        eq(schema.prescriptions.patientId, parsed.data.patientId),
+        eq(schema.prescriptions.status, 'active')
+      )
+    );
+  if (meds.length === 0) {
+    res.json({ ok: true, sent: 0 });
+    return;
+  }
   const med = meds[0];
-  await sms.send({ to: patient.phone, body: `MedCore reminder: Time for your ${med.drugName} ${med.dosage}. Reply TAKEN to confirm or SKIP to log a skip.` });
-  const subs = await db.select().from(schema.pushSubscriptions).where(eq(schema.pushSubscriptions.userId, patient.id));
+  await sms.send({
+    to: patient.phone,
+    body: `MedCore reminder: Time for your ${med.drugName} ${med.dosage}. Reply TAKEN to confirm or SKIP to log a skip.`,
+  });
+  const subs = await db
+    .select()
+    .from(schema.pushSubscriptions)
+    .where(eq(schema.pushSubscriptions.userId, patient.id));
   for (const sub of subs) {
     await sendPush(
       { endpoint: sub.endpoint, keys: { p256dh: sub.p256dh, auth: sub.auth } },
-      { title: 'Time for your medication', body: `${med.drugName} ${med.dosage}`, tag: med.id },
+      { title: 'Time for your medication', body: `${med.drugName} ${med.dosage}`, tag: med.id }
     );
   }
   res.json({ ok: true, sent: subs.length + 1 });

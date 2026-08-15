@@ -26,10 +26,14 @@ export function formatPatientContext(ctx: PatientContext): string {
     : '- None on record';
   const allergies = ctx.allergies.length ? ctx.allergies.join(', ') : 'None recorded';
   const encounters = ctx.recentEncounters.length
-    ? ctx.recentEncounters.map(e => `- ${e.date}: ${e.chiefComplaint ?? 'N/A'} — Dx: ${e.diagnosis ?? 'N/A'}`).join('\n')
+    ? ctx.recentEncounters
+        .map(e => `- ${e.date}: ${e.chiefComplaint ?? 'N/A'} — Dx: ${e.diagnosis ?? 'N/A'}`)
+        .join('\n')
     : '- No recent encounters';
   const labs = ctx.recentLabs.length
-    ? ctx.recentLabs.map(l => `- ${l.testName}: ${l.value}${l.unit ? ' ' + l.unit : ''} (${l.status})`).join('\n')
+    ? ctx.recentLabs
+        .map(l => `- ${l.testName}: ${l.value}${l.unit ? ' ' + l.unit : ''} (${l.status})`)
+        .join('\n')
     : '- No recent labs';
   return [
     `Patient ID: ${ctx.id}`,

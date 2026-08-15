@@ -1,8 +1,14 @@
+import { AlertTriangle, Info, ShieldAlert, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, ShieldAlert, Info, X } from 'lucide-react';
-import { checkInteraction, createPrescription, listPrescriptions, type InteractionResult, type Prescription } from '../../services/api';
-import { ClinicalText, ClinicalBanner } from './ClinicalText';
+import {
+  checkInteraction,
+  createPrescription,
+  listPrescriptions,
+  type InteractionResult,
+  type Prescription,
+} from '../../services/api';
+import { ClinicalBanner, ClinicalText } from './ClinicalText';
 
 interface Props {
   open: boolean;
@@ -54,7 +60,9 @@ export function PrescriptionFormModal({ open, onClose, patientId, doctorId, onSa
 
   useEffect(() => {
     if (!open) return;
-    listPrescriptions(patientId).then(r => setCurrentMeds(r.prescriptions.filter(p => p.status === 'active')));
+    listPrescriptions(patientId).then(r =>
+      setCurrentMeds(r.prescriptions.filter(p => p.status === 'active'))
+    );
     setError(null);
   }, [open, patientId]);
 
@@ -90,7 +98,12 @@ export function PrescriptionFormModal({ open, onClose, patientId, doctorId, onSa
 
   const blockedByWarnings = warningResults.some(r => !ackWarnings[`${r.drugB.toLowerCase()}`]);
   const blockedByCritical = hasCritical && (!ackCritical || pin.length < 4);
-  const canSubmit = !blockedByCritical && !blockedByWarnings && drugName.length >= 3 && dosage.length > 0 && !submitting;
+  const canSubmit =
+    !blockedByCritical &&
+    !blockedByWarnings &&
+    drugName.length >= 3 &&
+    dosage.length > 0 &&
+    !submitting;
 
   async function submit() {
     setSubmitting(true);
@@ -206,21 +219,32 @@ export function PrescriptionFormModal({ open, onClose, patientId, doctorId, onSa
           </label>
 
           <div>
-            <p className="text-[11px] text-[#5B5149] uppercase tracking-widest mb-2">Current medications</p>
+            <p className="text-[11px] text-[#5B5149] uppercase tracking-widest mb-2">
+              Current medications
+            </p>
             {currentMeds.length === 0 && <p className="text-xs text-[#5B5149]">None.</p>}
             <ul className="flex flex-wrap gap-2">
               {currentMeds.map(m => (
-                <li key={m.id} className="text-xs rounded-full bg-[#F3ECE1] border border-[#D9C8AE] px-2 py-1">
-                  <ClinicalText>{m.drugName} {m.dosage}</ClinicalText>
+                <li
+                  key={m.id}
+                  className="text-xs rounded-full bg-[#F3ECE1] border border-[#D9C8AE] px-2 py-1"
+                >
+                  <ClinicalText>
+                    {m.drugName} {m.dosage}
+                  </ClinicalText>
                 </li>
               ))}
             </ul>
           </div>
 
           <div aria-live="polite" className="space-y-2">
-            {check.loading && <p className="text-xs text-[#5B5149]">{t('prescriptions.checking')}</p>}
+            {check.loading && (
+              <p className="text-xs text-[#5B5149]">{t('prescriptions.checking')}</p>
+            )}
             {!check.loading && drugName.length >= 3 && check.results.length === 0 && (
-              <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">{t('prescriptions.noInteractions')}</p>
+              <p className="text-xs text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg px-3 py-2">
+                {t('prescriptions.noInteractions')}
+              </p>
             )}
             {[...criticalResults, ...warningResults, ...infoResults].map((r, i) => {
               const theme = LEVEL_THEME[r.level as keyof typeof LEVEL_THEME];
@@ -231,13 +255,22 @@ export function PrescriptionFormModal({ open, onClose, patientId, doctorId, onSa
                   <p className="flex items-start gap-2">
                     <Icon className="w-4 h-4 mt-0.5 shrink-0" />
                     <span>
-                      <span className="text-[11px] uppercase tracking-widest font-semibold mr-1">{t(theme.labelKey)}</span>
-                      <ClinicalText>{r.drugA} + {r.drugB}</ClinicalText>: {r.message}
+                      <span className="text-[11px] uppercase tracking-widest font-semibold mr-1">
+                        {t(theme.labelKey)}
+                      </span>
+                      <ClinicalText>
+                        {r.drugA} + {r.drugB}
+                      </ClinicalText>
+                      : {r.message}
                     </span>
                   </p>
                   {r.level === 'warning' && (
                     <label className="mt-2 flex items-center gap-2 text-xs">
-                      <input type="checkbox" checked={!!ackWarnings[key]} onChange={e => setAckWarnings(s => ({ ...s, [key]: e.target.checked }))} />
+                      <input
+                        type="checkbox"
+                        checked={!!ackWarnings[key]}
+                        onChange={e => setAckWarnings(s => ({ ...s, [key]: e.target.checked }))}
+                      />
                       {t('prescriptions.ackWarning')}
                     </label>
                   )}
@@ -249,12 +282,21 @@ export function PrescriptionFormModal({ open, onClose, patientId, doctorId, onSa
           {hasCritical && (
             <div className="rounded-xl border border-red-300 bg-red-50 p-3 space-y-2 text-sm">
               <label className="flex items-center gap-2 text-red-800">
-                <input type="checkbox" checked={ackCritical} onChange={e => setAckCritical(e.target.checked)} />
+                <input
+                  type="checkbox"
+                  checked={ackCritical}
+                  onChange={e => setAckCritical(e.target.checked)}
+                />
                 {t('prescriptions.ackCritical')}
               </label>
               <label className="text-xs flex flex-col gap-1 text-red-800">
                 {t('prescriptions.overrideReason')}
-                <textarea rows={2} value={overrideReason} onChange={e => setOverrideReason(e.target.value)} className="af-focus rounded-lg border border-red-300 px-2 py-1 text-sm text-black" />
+                <textarea
+                  rows={2}
+                  value={overrideReason}
+                  onChange={e => setOverrideReason(e.target.value)}
+                  className="af-focus rounded-lg border border-red-300 px-2 py-1 text-sm text-black"
+                />
               </label>
               <label className="text-xs flex flex-col gap-1 text-red-800">
                 {t('prescriptions.overridePin')}
@@ -272,7 +314,11 @@ export function PrescriptionFormModal({ open, onClose, patientId, doctorId, onSa
             </div>
           )}
 
-          {error && <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{error}</p>}
+          {error && (
+            <p className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {error}
+            </p>
+          )}
 
           <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center sm:justify-end gap-2 pt-2">
             <button

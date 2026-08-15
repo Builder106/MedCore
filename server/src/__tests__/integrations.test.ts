@@ -1,5 +1,5 @@
-import { describe, it, expect } from 'vitest';
-import { parseCsv, verifyNationalId, checkInsuranceEligibility } from '../lib/integrations.js';
+import { describe, expect, it } from 'vitest';
+import { checkInsuranceEligibility, parseCsv, verifyNationalId } from '../lib/integrations.js';
 
 // ── parseCsv ──────────────────────────────────────────────────────────────────
 

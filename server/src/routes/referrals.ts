@@ -1,6 +1,6 @@
+import { desc, eq } from 'drizzle-orm';
 import { Router } from 'express';
 import { z } from 'zod';
-import { desc, eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 import { newId } from '../lib/ids.js';
 
@@ -15,7 +15,11 @@ referralsRouter.get('/referrals', async (req, res) => {
     : parsed.doctorId
       ? eq(schema.referrals.fromDoctorId, parsed.doctorId)
       : undefined;
-  const rows = await db.select().from(schema.referrals).where(where).orderBy(desc(schema.referrals.createdAt));
+  const rows = await db
+    .select()
+    .from(schema.referrals)
+    .where(where)
+    .orderBy(desc(schema.referrals.createdAt));
   res.json({ referrals: rows });
 });
 
@@ -37,12 +41,15 @@ referralsRouter.post('/referrals', async (req, res) => {
   }
   const { db } = await getDb();
   const id = newId('REF');
-  await db.insert(schema.referrals).values({
-    id,
-    ...parsed.data,
-    status: 'pending',
-    createdAt: Date.now(),
-  }).run();
+  await db
+    .insert(schema.referrals)
+    .values({
+      id,
+      ...parsed.data,
+      status: 'pending',
+      createdAt: Date.now(),
+    })
+    .run();
   res.status(201).json({ id });
 });
 

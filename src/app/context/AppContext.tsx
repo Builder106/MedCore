@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from 'react';
+import { ReactNode, createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import i18nInstance, { SUPPORTED_LANGUAGES, applyDirection } from '../i18n';
 
@@ -46,7 +46,8 @@ export function loadPrefs(): PersistedPrefs {
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     const out: PersistedPrefs = {};
     const lang = parsed.lang;
-    if (typeof lang === 'string' && VALID_LANGS.includes(lang as Language)) out.lang = lang as Language;
+    if (typeof lang === 'string' && VALID_LANGS.includes(lang as Language))
+      out.lang = lang as Language;
     if (typeof parsed.currentPatientId === 'string' && parsed.currentPatientId.length > 0) {
       out.currentPatientId = parsed.currentPatientId;
     }
@@ -73,7 +74,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sessionLoading, setSessionLoading] = useState(true);
   const [role, setRoleState] = useState<UserRole>('doctor');
   const [lang, setLangState] = useState<Language>(initialLang);
-  const [currentPatientId, setCurrentPatientIdState] = useState(initial.currentPatientId ?? 'PAT-001');
+  const [currentPatientId, setCurrentPatientIdState] = useState(
+    initial.currentPatientId ?? 'PAT-001'
+  );
   const [offlineMode, setOfflineMode] = useState(false);
   const [lowBandwidth, setLowBandwidth] = useState(false);
 
@@ -148,7 +151,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setRoleState('doctor');
   }, []);
 
-  const currentUserId = sessionUser?.id ?? (role === 'doctor' ? 'DOC-001' : role === 'admin' ? 'ADM-001' : 'PAT-001');
+  const currentUserId =
+    sessionUser?.id ?? (role === 'doctor' ? 'DOC-001' : role === 'admin' ? 'ADM-001' : 'PAT-001');
 
   return (
     <AppContext.Provider

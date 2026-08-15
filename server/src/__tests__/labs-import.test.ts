@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
-import { resetDbCacheForTests, getDb, schema } from '../db/index.js';
+import { beforeAll, describe, expect, it } from 'vitest';
+import { getDb, resetDbCacheForTests, schema } from '../db/index.js';
 
 process.env.DATABASE_URL = ':memory:';
 process.env.DEMO_DOCTOR_PIN = '4242';
@@ -40,7 +40,7 @@ describe('POST /api/labs/import', () => {
   it('imports a valid row and returns imported count', async () => {
     const body = csv(
       'patient_id,test_name,value,unit,reference_range,status,collected_at',
-      'PAT-001,HbA1c,7.2,%,< 5.7%,high,2024-01-15',
+      'PAT-001,HbA1c,7.2,%,< 5.7%,high,2024-01-15'
     );
     const res = await agent.post('/api/labs/import').send({ csv: body });
     expect(res.status).toBe(200);
@@ -50,14 +50,10 @@ describe('POST /api/labs/import', () => {
   });
 
   it('persists the imported lab to the database', async () => {
-    const body = csv(
-      'patient_id,test_name,value,unit',
-      'PAT-001,Creatinine,0.9,mg/dL',
-    );
+    const body = csv('patient_id,test_name,value,unit', 'PAT-001,Creatinine,0.9,mg/dL');
     await agent.post('/api/labs/import').send({ csv: body });
     const { db } = await getDb();
-    const rows = await db.select().from(schema.labResults)
-      .all();
+    const rows = await db.select().from(schema.labResults).all();
     const lab = rows.find(r => r.testName === 'Creatinine');
     expect(lab).toBeDefined();
     expect(lab?.value).toBe('0.9');
@@ -66,10 +62,7 @@ describe('POST /api/labs/import', () => {
   });
 
   it('defaults missing status to normal', async () => {
-    const body = csv(
-      'patient_id,test_name,value',
-      'PAT-001,Glucose,5.0',
-    );
+    const body = csv('patient_id,test_name,value', 'PAT-001,Glucose,5.0');
     const res = await agent.post('/api/labs/import').send({ csv: body });
     expect(res.body.imported).toBe(1);
     const { db } = await getDb();
@@ -79,10 +72,7 @@ describe('POST /api/labs/import', () => {
   });
 
   it('skips rows with unknown patient_id and reports error', async () => {
-    const body = csv(
-      'patient_id,test_name,value',
-      'PAT-NOTEXIST,HbA1c,8.0',
-    );
+    const body = csv('patient_id,test_name,value', 'PAT-NOTEXIST,HbA1c,8.0');
     const res = await agent.post('/api/labs/import').send({ csv: body });
     expect(res.status).toBe(200);
     expect(res.body.imported).toBe(0);
@@ -93,9 +83,9 @@ describe('POST /api/labs/import', () => {
   it('skips rows missing required fields', async () => {
     const body = csv(
       'patient_id,test_name,value',
-      ',HbA1c,8.0',    // missing patient_id
-      'PAT-001,,8.0',  // missing test_name
-      'PAT-001,HbA1c,', // missing value
+      ',HbA1c,8.0', // missing patient_id
+      'PAT-001,,8.0', // missing test_name
+      'PAT-001,HbA1c,' // missing value
     );
     const res = await agent.post('/api/labs/import').send({ csv: body });
     expect(res.body.imported).toBe(0);
@@ -107,7 +97,7 @@ describe('POST /api/labs/import', () => {
       'patient_id,test_name,value',
       'PAT-001,WBC,7.5',
       'PAT-NOTEXIST,WBC,7.5',
-      'PAT-001,RBC,5.0',
+      'PAT-001,RBC,5.0'
     );
     const res = await agent.post('/api/labs/import').send({ csv: body });
     expect(res.body.imported).toBe(2);
@@ -116,20 +106,14 @@ describe('POST /api/labs/import', () => {
   });
 
   it('rejects an invalid collected_at date', async () => {
-    const body = csv(
-      'patient_id,test_name,value,collected_at',
-      'PAT-001,HbA1c,7.0,not-a-date',
-    );
+    const body = csv('patient_id,test_name,value,collected_at', 'PAT-001,HbA1c,7.0,not-a-date');
     const res = await agent.post('/api/labs/import').send({ csv: body });
     expect(res.body.imported).toBe(0);
     expect(res.body.errors[0].reason).toContain('invalid collected_at date');
   });
 
   it('normalises an invalid status value to normal', async () => {
-    const body = csv(
-      'patient_id,test_name,value,status',
-      'PAT-001,Cholesterol,5.2,borderline',
-    );
+    const body = csv('patient_id,test_name,value,status', 'PAT-001,Cholesterol,5.2,borderline');
     const res = await agent.post('/api/labs/import').send({ csv: body });
     expect(res.body.imported).toBe(1);
     const { db } = await getDb();
@@ -141,8 +125,8 @@ describe('POST /api/labs/import', () => {
   it('returns row numbers in errors matching 1-based data line (header is row 1)', async () => {
     const body = csv(
       'patient_id,test_name,value',
-      'PAT-001,Sodium,140',   // row 2 — valid
-      'PAT-NOPE,Sodium,140',  // row 3 — error
+      'PAT-001,Sodium,140', // row 2 — valid
+      'PAT-NOPE,Sodium,140' // row 3 — error
     );
     const res = await agent.post('/api/labs/import').send({ csv: body });
     expect(res.body.errors[0].row).toBe(3);

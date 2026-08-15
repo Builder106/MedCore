@@ -1,6 +1,6 @@
+import { Download, FileText } from 'lucide-react';
+import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { dailyStats, facilities } from '../data/mock-data';
-import { FileText, Download } from 'lucide-react';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip } from 'recharts';
 
 export function ReportsPage() {
   return (
@@ -39,11 +39,20 @@ export function ReportsPage() {
                 <div key={f.id} className="p-3 bg-gray-50 rounded-lg">
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-[13px]">{f.name}</p>
-                    <span className={`text-[11px] px-2 py-0.5 rounded-full ${occ > 90 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>{occ}% occupied</span>
+                    <span
+                      className={`text-[11px] px-2 py-0.5 rounded-full ${occ > 90 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}
+                    >
+                      {occ}% occupied
+                    </span>
                   </div>
-                  <p className="text-[11px] text-gray-500">{f.location} • {f.level}</p>
+                  <p className="text-[11px] text-gray-500">
+                    {f.location} • {f.level}
+                  </p>
                   <div className="mt-2 h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full ${occ > 90 ? 'bg-red-500' : occ > 75 ? 'bg-amber-500' : 'bg-green-500'}`} style={{ width: `${occ}%` }} />
+                    <div
+                      className={`h-full rounded-full ${occ > 90 ? 'bg-red-500' : occ > 75 ? 'bg-amber-500' : 'bg-green-500'}`}
+                      style={{ width: `${occ}%` }}
+                    />
                   </div>
                 </div>
               );

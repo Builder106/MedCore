@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
-import { NavLink } from 'react-router';
 import { clsx } from 'clsx';
-import { Hexagon, LogOut, Smartphone, Shield, Activity, Wifi, WifiOff, X } from 'lucide-react';
+import { Activity, Hexagon, LogOut, Shield, Smartphone, Wifi, WifiOff, X } from 'lucide-react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useApp, SUPPORTED_LANGUAGES } from '../context/AppContext';
-import { doctorItems, patientItems, adminItems } from './Sidebar';
+import { NavLink } from 'react-router';
+import { SUPPORTED_LANGUAGES, useApp } from '../context/AppContext';
+import { adminItems, doctorItems, patientItems } from './Sidebar';
 
 interface MobileDrawerProps {
   open: boolean;
@@ -12,7 +12,17 @@ interface MobileDrawerProps {
 }
 
 export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
-  const { role, lang, setLang, offlineMode, setOfflineMode, lowBandwidth, setLowBandwidth, sessionUser, signOut } = useApp();
+  const {
+    role,
+    lang,
+    setLang,
+    offlineMode,
+    setOfflineMode,
+    lowBandwidth,
+    setLowBandwidth,
+    sessionUser,
+    signOut,
+  } = useApp();
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -57,7 +67,10 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
         aria-modal="true"
         aria-label="Navigation"
         className="relative z-10 flex h-full w-[86%] max-w-[340px] flex-col bg-[#214838] text-[#F7F1E6] shadow-2xl"
-        style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+        style={{
+          paddingTop: 'env(safe-area-inset-top)',
+          paddingBottom: 'env(safe-area-inset-bottom)',
+        }}
       >
         <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-3">
           <div className="flex items-start gap-3">
@@ -66,7 +79,9 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
             </div>
             <div>
               <h1 className="text-[26px] leading-none tracking-tight text-[#F7F1E6]">MedCore</h1>
-              <p className="text-[11px] mt-1 uppercase tracking-[0.2em] text-[#DAB776]">{roleTitle}</p>
+              <p className="text-[11px] mt-1 uppercase tracking-[0.2em] text-[#DAB776]">
+                {roleTitle}
+              </p>
             </div>
           </div>
           <button
@@ -120,7 +135,10 @@ export function MobileDrawer({ open, onClose }: MobileDrawerProps) {
             {sessionUser?.name}
           </p>
 
-          <label htmlFor="drawer-lang" className="block text-[11px] uppercase tracking-[0.14em] text-[#DAB776]">
+          <label
+            htmlFor="drawer-lang"
+            className="block text-[11px] uppercase tracking-[0.14em] text-[#DAB776]"
+          >
             {t('common.language')}
           </label>
           <select

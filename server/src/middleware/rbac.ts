@@ -1,5 +1,5 @@
-import type { Request, Response, NextFunction } from 'express';
 import { and, eq } from 'drizzle-orm';
+import type { NextFunction, Request, Response } from 'express';
 import { getDb, schema } from '../db/index.js';
 
 type Role = 'doctor' | 'patient' | 'admin';
@@ -20,7 +20,7 @@ export function requireRole(...roles: Role[]) {
 
 export async function canAccessPatient(
   auth: { userId: string; role: string } | undefined,
-  patientId: string,
+  patientId: string
 ): Promise<boolean> {
   if (!auth) return false;
   if (auth.role === 'admin') return true;
@@ -30,23 +30,35 @@ export async function canAccessPatient(
     const appts = await db
       .select()
       .from(schema.appointments)
-      .where(and(eq(schema.appointments.doctorId, auth.userId), eq(schema.appointments.patientId, patientId)))
+      .where(
+        and(
+          eq(schema.appointments.doctorId, auth.userId),
+          eq(schema.appointments.patientId, patientId)
+        )
+      )
       .limit(1);
     if (appts.length > 0) return true;
     const rx = await db
       .select()
       .from(schema.prescriptions)
-      .where(and(eq(schema.prescriptions.doctorId, auth.userId), eq(schema.prescriptions.patientId, patientId)))
+      .where(
+        and(
+          eq(schema.prescriptions.doctorId, auth.userId),
+          eq(schema.prescriptions.patientId, patientId)
+        )
+      )
       .limit(1);
     if (rx.length > 0) return true;
     const consent = await db
       .select()
       .from(schema.consentGrants)
-      .where(and(
-        eq(schema.consentGrants.patientId, patientId),
-        eq(schema.consentGrants.grantedTo, auth.userId),
-        eq(schema.consentGrants.status, 'active'),
-      ))
+      .where(
+        and(
+          eq(schema.consentGrants.patientId, patientId),
+          eq(schema.consentGrants.grantedTo, auth.userId),
+          eq(schema.consentGrants.status, 'active')
+        )
+      )
       .limit(1);
     if (consent.length > 0) return true;
     return false;

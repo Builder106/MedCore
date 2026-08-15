@@ -1,6 +1,10 @@
 // Maps MedCore DB rows to FHIR R4 resource objects (read-only export).
 
-export interface FhirResource { resourceType: string; id: string; [key: string]: unknown }
+export interface FhirResource {
+  resourceType: string;
+  id: string;
+  [key: string]: unknown;
+}
 
 export interface FhirBundle {
   resourceType: 'Bundle';
@@ -105,30 +109,65 @@ export interface FhirEncounter extends FhirResource {
 }
 
 type PatientRow = {
-  id: string; firstName: string; lastName: string; dob: string;
-  phone: string; nationalId: string; bloodType: string | null;
-  allergies: string; createdAt: number;
+  id: string;
+  firstName: string;
+  lastName: string;
+  dob: string;
+  phone: string;
+  nationalId: string;
+  bloodType: string | null;
+  allergies: string;
+  createdAt: number;
 };
 type PrescriptionRow = {
-  id: string; patientId: string; drugName: string; dosage: string;
-  frequency: string; duration: string | null; status: string; notes: string | null; createdAt: number;
+  id: string;
+  patientId: string;
+  drugName: string;
+  dosage: string;
+  frequency: string;
+  duration: string | null;
+  status: string;
+  notes: string | null;
+  createdAt: number;
 };
 type LabRow = {
-  id: string; patientId: string; testName: string; value: string;
-  unit: string | null; referenceRange: string | null; status: string;
-  collectedAt: number; reviewedByDoctor: number;
+  id: string;
+  patientId: string;
+  testName: string;
+  value: string;
+  unit: string | null;
+  referenceRange: string | null;
+  status: string;
+  collectedAt: number;
+  reviewedByDoctor: number;
 };
 type VaxRow = {
-  id: string; patientId: string; vaccineName: string; doseNumber: number;
-  batch: string | null; site: string | null; administeredAt: number; administeredBy: string | null;
+  id: string;
+  patientId: string;
+  vaccineName: string;
+  doseNumber: number;
+  batch: string | null;
+  site: string | null;
+  administeredAt: number;
+  administeredBy: string | null;
 };
 type EncounterRow = {
-  id: string; patientId: string; encounterDate: number; type: string;
-  chiefComplaint: string | null; diagnosis: string | null;
+  id: string;
+  patientId: string;
+  encounterDate: number;
+  type: string;
+  chiefComplaint: string | null;
+  diagnosis: string | null;
 };
 
 export function toFhirPatient(p: PatientRow): FhirPatient {
-  const allergies = (() => { try { return JSON.parse(p.allergies) as string[]; } catch { return []; } })();
+  const allergies = (() => {
+    try {
+      return JSON.parse(p.allergies) as string[];
+    } catch {
+      return [];
+    }
+  })();
   return {
     resourceType: 'Patient',
     id: p.id,
@@ -140,21 +179,29 @@ export function toFhirPatient(p: PatientRow): FhirPatient {
     name: [{ use: 'official', family: p.lastName, given: [p.firstName] }],
     telecom: [{ system: 'phone', value: p.phone, use: 'mobile' }],
     birthDate: p.dob,
-    ...(p.bloodType ? { extension: [{ url: 'urn:medcore:blood-type', valueString: p.bloodType }] } : {}),
-    ...(allergies.length ? {
-      allergyIntolerance: allergies.map((a, i) => ({
-        resourceType: 'AllergyIntolerance' as const,
-        id: `allergy-${p.id}-${i}`,
-        patient: { reference: `Patient/${p.id}` },
-        code: { text: a },
-        clinicalStatus: { coding: [{ code: 'active' }] },
-      })),
-    } : {}),
+    ...(p.bloodType
+      ? { extension: [{ url: 'urn:medcore:blood-type', valueString: p.bloodType }] }
+      : {}),
+    ...(allergies.length
+      ? {
+          allergyIntolerance: allergies.map((a, i) => ({
+            resourceType: 'AllergyIntolerance' as const,
+            id: `allergy-${p.id}-${i}`,
+            patient: { reference: `Patient/${p.id}` },
+            code: { text: a },
+            clinicalStatus: { coding: [{ code: 'active' }] },
+          })),
+        }
+      : {}),
   };
 }
 
 export function toFhirMedicationRequest(rx: PrescriptionRow): FhirMedicationRequest {
-  const statusMap: Record<string, string> = { active: 'active', completed: 'completed', discontinued: 'stopped' };
+  const statusMap: Record<string, string> = {
+    active: 'active',
+    completed: 'completed',
+    discontinued: 'stopped',
+  };
   return {
     resourceType: 'MedicationRequest',
     id: rx.id,
@@ -163,9 +210,13 @@ export function toFhirMedicationRequest(rx: PrescriptionRow): FhirMedicationRequ
     medicationCodeableConcept: { text: rx.drugName },
     subject: { reference: `Patient/${rx.patientId}` },
     authoredOn: new Date(rx.createdAt).toISOString().slice(0, 10),
-    dosageInstruction: [{
-      text: [rx.dosage, rx.frequency, rx.duration ? `for ${rx.duration}` : ''].filter(Boolean).join(' '),
-    }],
+    dosageInstruction: [
+      {
+        text: [rx.dosage, rx.frequency, rx.duration ? `for ${rx.duration}` : '']
+          .filter(Boolean)
+          .join(' '),
+      },
+    ],
     ...(rx.notes ? { note: [{ text: rx.notes }] } : {}),
   };
 }
@@ -176,15 +227,37 @@ export function toFhirObservation(lab: LabRow): FhirObservation {
     resourceType: 'Observation',
     id: lab.id,
     status: lab.reviewedByDoctor ? 'final' : 'preliminary',
-    category: [{ coding: [{ system: 'http://terminology.hl7.org/CodeSystem/observation-category', code: 'laboratory', display: 'Laboratory' }] }],
+    category: [
+      {
+        coding: [
+          {
+            system: 'http://terminology.hl7.org/CodeSystem/observation-category',
+            code: 'laboratory',
+            display: 'Laboratory',
+          },
+        ],
+      },
+    ],
     code: { text: lab.testName },
     subject: { reference: `Patient/${lab.patientId}` },
     effectiveDateTime: new Date(lab.collectedAt).toISOString(),
     valueString: lab.unit ? `${lab.value} ${lab.unit}` : lab.value,
     ...(lab.referenceRange ? { referenceRange: [{ text: lab.referenceRange }] } : {}),
-    ...(lab.status !== 'normal' ? {
-      interpretation: [{ coding: [{ system: 'http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation', code: interpCode[lab.status] ?? 'U', display: lab.status }] }],
-    } : {}),
+    ...(lab.status !== 'normal'
+      ? {
+          interpretation: [
+            {
+              coding: [
+                {
+                  system: 'http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation',
+                  code: interpCode[lab.status] ?? 'U',
+                  display: lab.status,
+                },
+              ],
+            },
+          ],
+        }
+      : {}),
   };
 }
 

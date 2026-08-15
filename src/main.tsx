@@ -1,17 +1,17 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { RouterProvider } from 'react-router/dom'
-import { Analytics } from '@vercel/analytics/react'
-import { SpeedInsights } from '@vercel/speed-insights/react'
-import { AppProvider } from './app/context/AppContext'
-import { router } from './app/routes'
-import './app/i18n'
-import './styles/index.css'
+import { Analytics } from '@vercel/analytics/react';
+import { SpeedInsights } from '@vercel/speed-insights/react';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { RouterProvider } from 'react-router/dom';
+import { AppProvider } from './app/context/AppContext';
+import './app/i18n';
+import { router } from './app/routes';
+import './styles/index.css';
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {})
-  })
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  });
 }
 
 createRoot(document.getElementById('root')!).render(
@@ -21,5 +21,5 @@ createRoot(document.getElementById('root')!).render(
       <Analytics />
       <SpeedInsights />
     </AppProvider>
-  </StrictMode>,
-)
+  </StrictMode>
+);

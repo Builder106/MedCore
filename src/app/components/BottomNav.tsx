@@ -1,8 +1,20 @@
-import { NavLink } from 'react-router';
-import type { ComponentType } from 'react';
 import { clsx } from 'clsx';
-import { Barcode, Bell, FileText, HeartPulse, Mic, MoreHorizontal, Pill, Stethoscope, UserCog, Users, Video } from 'lucide-react';
+import {
+  Barcode,
+  Bell,
+  FileText,
+  HeartPulse,
+  Mic,
+  MoreHorizontal,
+  Pill,
+  Stethoscope,
+  UserCog,
+  Users,
+  Video,
+} from 'lucide-react';
+import type { ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
+import { NavLink } from 'react-router';
 import { useApp } from '../context/AppContext';
 
 type TabItem = {
@@ -68,7 +80,9 @@ export function BottomNav({ onOpenMore }: BottomNavProps) {
                       isActive ? 'bg-[#C39A3D]/25' : 'bg-transparent'
                     )}
                   >
-                    <tab.icon className={clsx('w-5 h-5', isActive ? 'text-[#214838]' : 'text-[#5B5149]')} />
+                    <tab.icon
+                      className={clsx('w-5 h-5', isActive ? 'text-[#214838]' : 'text-[#5B5149]')}
+                    />
                   </span>
                   <span className="truncate max-w-full">{t(tab.labelKey)}</span>
                 </>
@@ -94,4 +108,4 @@ export function BottomNav({ onOpenMore }: BottomNavProps) {
   );
 }
 
-export { patientTabs, doctorTabs, adminTabs };
+export { adminTabs, doctorTabs, patientTabs };

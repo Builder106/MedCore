@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { inventory as mockInventory } from '../data/mock-data';
 import { AlertTriangle, Download } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { ResponsiveTable, type TableColumn } from '../components/ui/responsive-table';
+import { inventory as mockInventory } from '../data/mock-data';
 import { listInventory, type InventoryItem } from '../services/api';
 
 interface InvRow {
@@ -43,37 +43,55 @@ export function InventoryPage() {
       } catch {
         if (cancelled) return;
         setApiOk(false);
-        setRows(mockInventory.map(i => ({
-          id: i.id,
-          name: i.name,
-          category: i.category,
-          quantity: i.quantity,
-          reorderLevel: i.reorderLevel,
-          unit: i.unit,
-          linkedPrescriptions: i.linkedPrescriptions,
-        })));
+        setRows(
+          mockInventory.map(i => ({
+            id: i.id,
+            name: i.name,
+            category: i.category,
+            quantity: i.quantity,
+            reorderLevel: i.reorderLevel,
+            unit: i.unit,
+            linkedPrescriptions: i.linkedPrescriptions,
+          }))
+        );
       } finally {
         if (!cancelled) setLoading(false);
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const sorted = [...rows].sort((a, b) => (a.quantity <= a.reorderLevel ? -1 : 1) - (b.quantity <= b.reorderLevel ? -1 : 1));
+  const sorted = [...rows].sort(
+    (a, b) => (a.quantity <= a.reorderLevel ? -1 : 1) - (b.quantity <= b.reorderLevel ? -1 : 1)
+  );
   const lowStock = rows.filter(i => i.quantity <= i.reorderLevel).length;
 
   const columns: TableColumn<InvRow>[] = [
     { key: 'drug', header: 'Drug', cell: i => <span className="text-[14px]">{i.name}</span> },
-    { key: 'cat', header: 'Category', cell: i => <span className="text-[12px] text-gray-500">{i.category}</span> },
+    {
+      key: 'cat',
+      header: 'Category',
+      cell: i => <span className="text-[12px] text-gray-500">{i.category}</span>,
+    },
     {
       key: 'qty',
       header: 'Quantity',
-      cell: i => <span className="text-[14px]">{i.quantity} {i.unit}</span>,
+      cell: i => (
+        <span className="text-[14px]">
+          {i.quantity} {i.unit}
+        </span>
+      ),
     },
     {
       key: 'reorder',
       header: 'Reorder Level',
-      cell: i => <span className="text-[13px] text-gray-500">{i.reorderLevel} {i.unit}</span>,
+      cell: i => (
+        <span className="text-[13px] text-gray-500">
+          {i.reorderLevel} {i.unit}
+        </span>
+      ),
       hideOnMobile: true,
     },
     { key: 'rx', header: 'Active Rx', cell: i => i.linkedPrescriptions, hideOnMobile: true },
@@ -86,7 +104,9 @@ export function InventoryPage() {
             <AlertTriangle className="w-3 h-3" /> LOW STOCK
           </span>
         ) : (
-          <span className="text-[11px] text-green-700 bg-green-100 px-2 py-0.5 rounded-full">In Stock</span>
+          <span className="text-[11px] text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+            In Stock
+          </span>
         ),
     },
   ];
