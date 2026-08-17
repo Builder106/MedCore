@@ -56,10 +56,11 @@ jobs:
           node-version: 26
           cache: npm
       - run: npm ci --legacy-peer-deps
+      - run: npm --prefix server ci
       - name: Open-source license compliance scan (frontend)
         run: npx license-checker --summary --production
-      - name: Typecheck frontend
-        run: npx tsc --noEmit
+      - name: Typecheck server
+        run: npm --prefix server run typecheck
 
   lint-server:
     name: Lint (server)
