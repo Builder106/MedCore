@@ -6,7 +6,7 @@ Feature: Authentication
     When I fill "user id" with "DOC-001"
     And I fill "pin" with "4242"
     And I click the "sign in" button
-    Then the URL should contain "/dashboard"
+    Then I should see "Doctor Workspace"
 
   Scenario: Login fails with the wrong PIN
     Given I am on the home page

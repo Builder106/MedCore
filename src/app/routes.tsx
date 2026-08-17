@@ -33,6 +33,7 @@ export const router = createBrowserRouter([
         Component: Layout,
         children: [
           { index: true, Component: DashboardPage },
+          { path: 'dashboard', Component: DashboardPage },
           { path: 'health-id', Component: HealthIdPage },
           { path: 'records', Component: RecordsPage },
           { path: 'patients', Component: PatientsListPage },

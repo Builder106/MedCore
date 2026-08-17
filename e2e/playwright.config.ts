@@ -1,5 +1,6 @@
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
+import { resolve } from 'node:path';
 
 // Paths are relative to this config file's directory. Don't use absolute
 // paths — the user's home may contain parentheses which fast-glob would
@@ -9,6 +10,8 @@ const testDir = defineBddConfig({
   steps: ['lib/hooks.ts', 'steps/**/*.steps.ts'],
   outputDir: '.features-gen/qa',
 });
+
+const ROOT = resolve(process.cwd());
 
 export default defineConfig({
   testDir,
@@ -24,6 +27,22 @@ export default defineConfig({
     video: 'retain-on-failure',
     screenshot: 'only-on-failure',
   },
+  webServer: [
+    {
+      command: 'npm --prefix server run dev',
+      cwd: ROOT,
+      port: 3001,
+      reuseExistingServer: !process.env.CI,
+      timeout: 60_000,
+    },
+    {
+      command: 'npx vite --port 5173',
+      cwd: ROOT,
+      port: 5173,
+      reuseExistingServer: !process.env.CI,
+      timeout: 60_000,
+    },
+  ],
   projects: [
     {
       name: 'chromium',
