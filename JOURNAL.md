@@ -8,6 +8,12 @@
 
 ---
 
+## 2026-08-27 — Resolved CI workflow action tags and @eslint/js dependency `#incident`
+
+Audited GitHub Actions workflow runs and resolved the frontend lint failure on CI. Downgraded GitHub Action runner references (`actions/checkout`, `actions/setup-node`, `actions/upload-artifact`) in `.github/workflows/ci.yml` and `.github/workflows/deploy.yml` from invalid `@v7` tags to `@v4`. Explicitly declared `@eslint/js` in root `devDependencies` and synced root package metadata so ESLint flat config loads properly in CI runner environments.
+
+---
+
 ## 2026-05-28 — Landed deferred Turso/Vercel-FS path support `#milestone`
 
 Folded in the in-flight server work from before the pivot: optional Turso (remote libSQL over HTTPS) backend via `TURSO_DATABASE_URL`+`TURSO_AUTH_TOKEN`, gated so the GCP VM keeps using its local SQLite file (env vars unset → existing code path). `voice.ts`skips audio persistence when`process.env.VERCEL`is set so the read-only deployment FS doesn't blow up the transcribe endpoint — transcript is source of truth, the audio replay endpoint just 404s in that mode.`migrate.ts`now accepts`--env <file>`and`--seed`flags for remote-DB workflows. None of this is on the production path today (Vercel serves static-only via PR #10's rewrite), but the code paths are now in place if a Vercel-Turso preview environment ever makes sense. Also deleted the legacy`api/[...all].ts` entry point — it was the original "deploy Express to Vercel as a serverless function" handler from May 21, never actually shipped, made obsolete by the static + rewrite pivot.

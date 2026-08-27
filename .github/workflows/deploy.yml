@@ -35,7 +35,7 @@ jobs:
       digest_amd64: ${{ steps.export-digest.outputs.digest_amd64 }}
       digest_arm64: ${{ steps.export-digest.outputs.digest_arm64 }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
 
       - name: Lowercase image name
         id: img
