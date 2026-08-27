@@ -15,8 +15,8 @@
     "e2e": "bddgen test --config e2e/playwright.config.ts && playwright test --config=e2e/playwright.config.ts",
     "e2e:demo": "DEMO=1 bddgen test --config e2e/playwright.demo.config.ts && DEMO=1 playwright test --config=e2e/playwright.demo.config.ts",
     "e2e:demo:gif": "node scripts/mp4-to-gif.mjs",
-    "lint": "eslint . --ext .ts,.tsx --max-warnings 0",
-    "lint:fix": "eslint . --ext .ts,.tsx --fix",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write ."
   },
