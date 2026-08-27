@@ -8,6 +8,10 @@
 
 ---
 
+## 2026-08-27 — Pinned frontend tooling to supported ESLint and TypeScript versions `#incident`
+
+The frontend lint job failed before reading source because TypeScript 7 is not supported by the installed `typescript-eslint`, and ESLint 10 is not supported by `eslint-plugin-react`. Pinned root tooling to TypeScript 5.9.3 and ESLint 9.39.5, then synchronized `package-lock.json`; frontend and server lint pass on ampere-dev.
+
 ## 2026-08-27 — Resolved CI workflow action tags and @eslint/js dependency `#incident`
 
 Audited GitHub Actions workflow runs and resolved the frontend lint failure on CI. Downgraded GitHub Action runner references (`actions/checkout`, `actions/setup-node`, `actions/upload-artifact`) in `.github/workflows/ci.yml` and `.github/workflows/deploy.yml` from invalid `@v7` tags to `@v4`. Explicitly declared `@eslint/js` in root `devDependencies` and synced root package metadata so ESLint flat config loads properly in CI runner environments.
