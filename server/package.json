@@ -10,8 +10,8 @@
     "test:coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "migrate": "tsx src/db/migrate.ts",
-    "lint": "eslint . --ext .ts --max-warnings 0",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "eslint . --max-warnings 0",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write ."
   },
@@ -22,7 +22,7 @@
     "drizzle-orm": "^0.45.2",
     "express": "^5.2.1",
     "helmet": "^8.3.0",
-    "jose": "^6.2.8",
+    "jose": "^6.2.9",
     "multer": "^2.2.0",
     "node-cron": "^4.6.0",
     "tsx": "^4.23.12",
@@ -37,14 +37,14 @@
     "@types/node-cron": "^3.0.11",
     "@types/supertest": "^7.2.1",
     "@types/web-push": "^3.6.4",
-    "@vitest/coverage-v8": "^4.1.10",
-    "eslint": "^9.17.0",
+    "@vitest/coverage-v8": "^4.1.11",
+    "eslint": "^10.8.1",
     "eslint-config-prettier": "^10.0.1",
     "prettier": "^3.4.2",
     "prettier-plugin-organize-imports": "^4.1.0",
     "supertest": "^7.0.0",
-    "typescript": "^5.7.2",
-    "typescript-eslint": "^8.18.2",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.67.0",
     "vitest": "^4.1.10"
   }
 }
