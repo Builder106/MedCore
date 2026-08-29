@@ -4,6 +4,10 @@
 
 **Tags:** `#decision` `#pivot` `#incident` `#quote` `#feedback` `#milestone`
 
+## 2026-08-29: Let Vercel detect the MedCore build settings #decision
+
+Removed the explicit Vite framework, build, output, and install settings from `vercel.json` so Vercel can use the project defaults. Kept the `main` and `staging` Git deployment gates and the API rewrite.
+
 ## 2026-08-29: Git deployment branches restricted #decision
 
 Git-triggered Vercel deployments now run only for `main` and `staging`. The project keeps `main` as its Production Branch, so `staging` is the only Preview branch. Replaced the old `ignoreCommand`, which created canceled deployment records for blocked branches, with `git.deploymentEnabled`.
