@@ -1,7 +1,7 @@
 import { config as dotenvConfig } from 'dotenv';
 
 // Allow `npm --prefix server run migrate -- --env ../.env.local --seed` to
-// pull Turso credentials from the Vercel env pull when migrating the remote DB.
+// use a specific dotenv file when running migrations.
 const envFlag = process.argv.indexOf('--env');
 if (envFlag !== -1 && process.argv[envFlag + 1]) {
   dotenvConfig({ path: process.argv[envFlag + 1], override: true });

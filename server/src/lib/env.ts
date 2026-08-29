@@ -10,8 +10,6 @@ const Schema = z.object({
   SESSION_SECRET: z.string().min(32).default('medcore-dev-session-secret-min-32-chars'),
   SESSION_MAX_AGE_DAYS: z.coerce.number().default(7),
   DATABASE_URL: z.string().optional(),
-  TURSO_DATABASE_URL: z.string().optional(),
-  TURSO_AUTH_TOKEN: z.string().optional(),
   WEB_PUSH_PUBLIC_KEY: z.string().optional(),
   WEB_PUSH_PRIVATE_KEY: z.string().optional(),
   WEB_PUSH_CONTACT: z.string().default('mailto:demo@medcore.local'),
