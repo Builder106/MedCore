@@ -57,3 +57,8 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "typescript"
         versions: [">= 7.0.0"]
+
+  - package-ecosystem: "docker-compose"
+    directory: "/"
+    schedule:
+      interval: "weekly"
