@@ -220,7 +220,7 @@ aiRouter.post('/ai/risk-flags', async (req, res) => {
     maxTokens: 600,
     cachedSystem: false,
   });
-  let flags: unknown = [];
+  let flags: unknown;
   try {
     flags = JSON.parse(result.text);
   } catch {
