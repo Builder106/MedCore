@@ -150,7 +150,7 @@ jobs:
         run: npm run e2e
       - name: Upload Playwright artifacts on failure
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-results
           path: |
