@@ -4,6 +4,10 @@
 
 **Tags:** `#decision` `#pivot` `#incident` `#quote` `#feedback` `#milestone`
 
+## 2026-08-29: Git deployment branches restricted #decision
+
+Git-triggered Vercel deployments now run only for `main` and `staging`. The project keeps `main` as its Production Branch, so `staging` is the only Preview branch. Replaced the old `ignoreCommand`, which created canceled deployment records for blocked branches, with `git.deploymentEnabled`.
+
 > ℹ️ **Backfill notice.** Entries below dated 2026-04-18 and 2026-05-21 were reconstructed from git history and the published README in May 2026, AFTER the YAIS sprint. They cover the *what*and*when*that's verifiable from commits and docs — the*who said what*and*what surprised you* parts are mostly missing because the journal didn't exist during the sprint. Going forward, treat these as the structure, not the precedent: new entries should land in the moment with the human detail intact.
 
 ---
