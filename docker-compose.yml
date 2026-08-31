@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   postgres:
-    image: postgres:16-alpine
+    image: postgres:18-alpine
     container_name: medcore-postgres
     environment:
       POSTGRES_USER: medcore
