@@ -28,7 +28,9 @@ describe('interactions lib', () => {
     const mockFetchCritical = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
-        results: [{ drug_interactions: ['Severe contraindicated reaction leading to fatal risk.'] }],
+        results: [
+          { drug_interactions: ['Severe contraindicated reaction leading to fatal risk.'] },
+        ],
       }),
     });
 
@@ -51,7 +53,9 @@ describe('interactions lib', () => {
     const mockFetchInfo = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
-        results: [{ drug_interactions: ['Concurrent administration studied in pharmacokinetic trials.'] }],
+        results: [
+          { drug_interactions: ['Concurrent administration studied in pharmacokinetic trials.'] },
+        ],
       }),
     });
 
@@ -65,7 +69,9 @@ describe('interactions lib', () => {
         results: [{}],
       }),
     });
-    expect(await checkInteractionViaOpenFDA('DrugA', 'DrugB', mockFetchUndefinedInteractions as any)).toBeNull();
+    expect(
+      await checkInteractionViaOpenFDA('DrugA', 'DrugB', mockFetchUndefinedInteractions as any)
+    ).toBeNull();
 
     // Empty results array
     const mockFetchEmptyResults = vi.fn().mockResolvedValue({
@@ -74,14 +80,18 @@ describe('interactions lib', () => {
         results: [],
       }),
     });
-    expect(await checkInteractionViaOpenFDA('DrugA', 'DrugB', mockFetchEmptyResults as any)).toBeNull();
+    expect(
+      await checkInteractionViaOpenFDA('DrugA', 'DrugB', mockFetchEmptyResults as any)
+    ).toBeNull();
 
     // Missing results property
     const mockFetchNoResults = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({}),
     });
-    expect(await checkInteractionViaOpenFDA('DrugA', 'DrugB', mockFetchNoResults as any)).toBeNull();
+    expect(
+      await checkInteractionViaOpenFDA('DrugA', 'DrugB', mockFetchNoResults as any)
+    ).toBeNull();
 
     // HTTP error response
     const mockFetchError = vi.fn().mockResolvedValue({

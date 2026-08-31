@@ -17,7 +17,10 @@ describe('session-token lib', () => {
     const claims = { userId: 'usr-001', role: 'doctor', name: 'Dr. Sarah' };
     const token = await signSessionToken(claims, secret);
 
-    const verifiedWithWrongSecret = await verifySessionToken(token, 'another-completely-different-secret-key-32ch');
+    const verifiedWithWrongSecret = await verifySessionToken(
+      token,
+      'another-completely-different-secret-key-32ch'
+    );
     expect(verifiedWithWrongSecret).toBeNull();
 
     expect(await verifySessionToken('invalid.token.structure', secret)).toBeNull();

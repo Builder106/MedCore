@@ -16,7 +16,9 @@ describe('resolvePublicOrigin', () => {
     expect(resolvePublicOrigin(undefined, 'http://localhost:5173')).toBe('http://localhost:5173');
     expect(resolvePublicOrigin('', 'http://localhost:5173')).toBe('http://localhost:5173');
     expect(resolvePublicOrigin('   ', 'http://localhost:5173')).toBe('http://localhost:5173');
-    expect(resolvePublicOrigin('http://[invalid-url', 'http://localhost:5173')).toBe('http://localhost:5173');
+    expect(resolvePublicOrigin('http://[invalid-url', 'http://localhost:5173')).toBe(
+      'http://localhost:5173'
+    );
   });
 
   it('strips trailing slash from env', () => {

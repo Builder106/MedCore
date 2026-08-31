@@ -10,14 +10,18 @@ describe('buildVideoRoomEmbedUrl', () => {
   });
 
   it('preserves existing hash parameters when appending Jitsi config', () => {
-    const out = buildVideoRoomEmbedUrl('https://meet.jit.si/medcorepat001#userInfo.displayName=Doctor');
+    const out = buildVideoRoomEmbedUrl(
+      'https://meet.jit.si/medcorepat001#userInfo.displayName=Doctor'
+    );
     expect(out).toContain('userInfo.displayName=Doctor');
     expect(out).toContain('config.prejoinPageEnabled=false');
   });
 
   it('handles malformed URL by falling back to string concatenation', () => {
     const out = buildVideoRoomEmbedUrl('https://meet.jit.si:badport/room');
-    expect(out).toBe('https://meet.jit.si:badport/room#config.prejoinPageEnabled=false&config.disableDeepLinking=true');
+    expect(out).toBe(
+      'https://meet.jit.si:badport/room#config.prejoinPageEnabled=false&config.disableDeepLinking=true'
+    );
   });
 
   it('leaves Daily URLs unchanged', () => {
