@@ -102,8 +102,8 @@ jobs:
       - name: Install root dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Run frontend tests
-        run: npm test
+      - name: Run frontend tests with coverage
+        run: npm run test:coverage
 
       - name: Build frontend
         run: npm run build
@@ -128,8 +128,8 @@ jobs:
       - name: Typecheck server
         run: npm --prefix server run typecheck
 
-      - name: Run server tests
-        run: npm --prefix server test
+      - name: Run server tests with coverage
+        run: npm --prefix server run test:coverage
 
   e2e:
     name: E2E & Accessibility

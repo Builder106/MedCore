@@ -144,6 +144,11 @@ describe('toFhirMedicationRequest', () => {
     expect(r.status).toBe('stopped');
   });
 
+  it('maps completed status correctly', () => {
+    const r = toFhirMedicationRequest({ ...BASE_RX, status: 'completed' });
+    expect(r.status).toBe('completed');
+  });
+
   it('maps unknown status to unknown', () => {
     const r = toFhirMedicationRequest({ ...BASE_RX, status: 'anything_else' });
     expect(r.status).toBe('unknown');
@@ -159,6 +164,11 @@ describe('toFhirMedicationRequest', () => {
     expect(r.dosageInstruction[0].text).toContain('500mg');
     expect(r.dosageInstruction[0].text).toContain('Twice daily');
     expect(r.dosageInstruction[0].text).toContain('for 3 months');
+  });
+
+  it('handles dosage instruction without duration', () => {
+    const r = toFhirMedicationRequest({ ...BASE_RX, duration: '' });
+    expect(r.dosageInstruction[0].text).toBe('500mg Twice daily');
   });
 
   it('omits note when notes is null', () => {
@@ -216,9 +226,19 @@ describe('toFhirObservation', () => {
     expect(r.interpretation?.[0].coding[0].code).toBe('H');
   });
 
+  it('includes interpretation code L for low status', () => {
+    const r = toFhirObservation({ ...BASE_LAB, status: 'low' });
+    expect(r.interpretation?.[0].coding[0].code).toBe('L');
+  });
+
   it('includes interpretation code AA for critical status', () => {
     const r = toFhirObservation({ ...BASE_LAB, status: 'critical' });
     expect(r.interpretation?.[0].coding[0].code).toBe('AA');
+  });
+
+  it('defaults interpretation code to U for unrecognized status', () => {
+    const r = toFhirObservation({ ...BASE_LAB, status: 'indeterminate' });
+    expect(r.interpretation?.[0].coding[0].code).toBe('U');
   });
 
   it('omits interpretation for normal status', () => {
@@ -271,9 +291,24 @@ describe('toFhirImmunization', () => {
     expect(r.protocolApplied).toBeUndefined();
   });
 
+  it('includes site when site is set', () => {
+    const r = toFhirImmunization(BASE_VAX);
+    expect(r.site?.text).toBe('Left arm');
+  });
+
+  it('omits site when site is null', () => {
+    const r = toFhirImmunization({ ...BASE_VAX, site: null });
+    expect(r.site).toBeUndefined();
+  });
+
   it('includes performer when administeredBy is set', () => {
     const r = toFhirImmunization(BASE_VAX);
     expect(r.performer?.[0].actor.display).toBe('Dr. Omondi');
+  });
+
+  it('omits performer when administeredBy is null', () => {
+    const r = toFhirImmunization({ ...BASE_VAX, administeredBy: null });
+    expect(r.performer).toBeUndefined();
   });
 });
 
@@ -324,6 +359,11 @@ describe('toFhirEncounter', () => {
   it('includes diagnosis when set', () => {
     const r = toFhirEncounter(BASE_ENC);
     expect(r.diagnosis?.[0].condition.display).toBe('Tension headache');
+  });
+
+  it('omits diagnosis when diagnosis is null', () => {
+    const r = toFhirEncounter({ ...BASE_ENC, diagnosis: null });
+    expect(r.diagnosis).toBeUndefined();
   });
 });
 
