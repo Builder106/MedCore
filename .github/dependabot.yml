@@ -7,19 +7,25 @@ updates:
       day: monday
     open-pull-requests-limit: 5
     groups:
-      web-deps:
+      minor-and-patch:
         patterns:
           - "*"
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - web
     ignore:
-      - dependency-name: "react"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "react-dom"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "react-router"
-        update-types: ["version-update:semver-major"]
+      - dependency-name: react
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: react-dom
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: react-router
+        update-types:
+          - "version-update:semver-major"
 
   - package-ecosystem: npm
     directory: /server
@@ -28,9 +34,12 @@ updates:
       day: monday
     open-pull-requests-limit: 5
     groups:
-      server-deps:
+      minor-and-patch:
         patterns:
           - "*"
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - server
@@ -40,6 +49,10 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    groups:
+      actions:
+        patterns:
+          - "*"
     labels:
       - dependencies
       - ci
@@ -49,16 +62,32 @@ updates:
     schedule:
       interval: weekly
       day: monday
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
     labels:
       - dependencies
       - docker
     ignore:
-      - dependency-name: "node"
-        update-types: ["version-update:semver-major"]
-      - dependency-name: "typescript"
-        versions: [">= 7.0.0"]
+      - dependency-name: node
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: typescript
+        versions:
+          - ">= 7.0.0"
 
-  - package-ecosystem: "docker-compose"
-    directory: "/"
+  - package-ecosystem: docker-compose
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
