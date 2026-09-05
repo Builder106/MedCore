@@ -16,13 +16,13 @@ Git-triggered Vercel deployments now run only for `main` and `staging`. The proj
 
 ---
 
-## 2026-08-27: Fixed the isolated server lint install #incident
-
-The server CI job installs from `server/package-lock.json`, so declaring `@eslint/js` only at the repository root could not satisfy its flat ESLint config. Added the package to the server manifest and lockfile. The complete frontend and server lint, format, typecheck, test, and build matrix now passes on ampere-dev.
-
 ## 2026-08-29: Removed unused remote database path `#decision`
 
 The live backend uses its persistent local SQLite database, so the unused remote database branch and environment settings are gone. The server now has one database path.
+
+## 2026-08-27: Fixed the isolated server lint install #incident
+
+The server CI job installs from `server/package-lock.json`, so declaring `@eslint/js` only at the repository root could not satisfy its flat ESLint config. Added the package to the server manifest and lockfile. The complete frontend and server lint, format, typecheck, test, and build matrix now passes on ampere-dev.
 
 ## 2026-08-27 — Pinned frontend tooling to supported ESLint and TypeScript versions `#incident`
 
