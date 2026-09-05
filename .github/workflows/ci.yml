@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, staging]
   pull_request:
 
 concurrency:
@@ -133,7 +133,7 @@ jobs:
 
   e2e:
     name: E2E & Accessibility
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
@@ -158,3 +158,20 @@ jobs:
             playwright-report/
           retention-days: 7
           if-no-files-found: ignore
+
+  deploy:
+    name: Trigger Vercel Deployment
+    needs: [secrets, lint, format, typecheck, lint-server, format-server, test, e2e]
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Trigger Staging Deploy Hook
+        if: github.ref == 'refs/heads/staging'
+        run: |
+          curl -sS -f -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_STAGING }}"
+
+      - name: Trigger Production Deploy Hook
+        if: github.ref == 'refs/heads/main'
+        run: |
+          curl -sS -f -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_PROD }}"
+
